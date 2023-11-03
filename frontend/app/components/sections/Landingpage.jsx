@@ -1,8 +1,10 @@
 "use client";
+
 import React, { useState, useCallback } from "react";
-import EnvironmentSwitch from "../utils/EnvironmentSwitch";
-import UploadButton from "../utils/UploadButton";
-import FileUpload from "../utils/FileUpload";
+import EnvironmentSwitch from "@/app/components/utils/EnvironmentSwitch";
+import UploadButton from "@/app/components/utils/UploadButton";
+import FileUpload from "@/app/components/utils/FileUpload";
+import sendFilesToBackend from "@/app/components/utils/SendFileToBackend";
 import { useDropzone } from "react-dropzone";
 
 export default function Landingpage() {
@@ -23,17 +25,23 @@ export default function Landingpage() {
     }
   };
 
-  //send files to backend
   const handleSubmit = async () => {
-    console.log("Uploading files:", files);
+    try {
+      const result = await sendFilesToBackend(files, isMoodle, isCoursera);
+      console.log("Files uploaded successfully::", result);
+    } catch (error) {
+      console.error("Failed to upload files:", error);
+    }
   };
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
+    onDrop,
+  });
 
   return (
     <main>
-      <div className="flex flex-col gap-2 justify-center items-center pt-10">
-        <div className="text-3xl font-bold text-blue-500">
+      <div className="flex flex-col gap-10 justify-center items-center pt-10">
+        <div className="text-3xl font-bold text-blue">
           Select the download type/environment
         </div>
         <div className="flex gap-20">
@@ -43,7 +51,11 @@ export default function Landingpage() {
             onSwitchChange={handleSwitchChange}
           />
         </div>
-        <FileUpload getRootProps={getRootProps} getInputProps={getInputProps} />
+        <FileUpload
+          getRootProps={getRootProps}
+          getInputProps={getInputProps}
+          acceptedFiles={acceptedFiles}
+        />
         <UploadButton onSubmit={handleSubmit} />
       </div>
     </main>
