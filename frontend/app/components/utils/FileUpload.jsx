@@ -1,8 +1,8 @@
 import React from "react";
 
 export default function FileUpload({
-  getRootProps,
-  getInputProps,
+  rootProps,
+  inputProps,
   acceptedFiles,
 }) {
   const fileList = acceptedFiles.map((file) => (
@@ -11,10 +11,10 @@ export default function FileUpload({
 
   return (
     <div
-      {...getRootProps()}
+      {...rootProps()}
       className="bg-gray-300 w-1/2 h-64 rounded-lg cursor-pointer flex flex-col justify-center items-center"
     >
-      <input {...getInputProps()} />
+      <input {...inputProps()} />
       {fileList.length > 0 ? (
         <ul className="text-center">
           <b>{fileList}</b>

@@ -4,7 +4,7 @@ import React, { useState, useCallback } from "react";
 import EnvironmentSwitch from "@/app/components/utils/EnvironmentSwitch";
 import UploadButton from "@/app/components/utils/UploadButton";
 import FileUpload from "@/app/components/utils/FileUpload";
-import sendFilesToBackend from "@/app/components/utils/SendFileToBackend";
+import handleSubmit from "@/app/components/utils/SubmissionHandler";
 import { useDropzone } from "react-dropzone";
 
 export default function Landingpage() {
@@ -13,7 +13,6 @@ export default function Landingpage() {
   const [files, setFiles] = useState([]);
 
   const onDrop = useCallback((acceptedFiles) => {
-    console.log("Files:", acceptedFiles);
     setFiles(acceptedFiles);
   }, []);
 
@@ -25,18 +24,20 @@ export default function Landingpage() {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleFormSubmit = async () => {
     try {
-      const result = await sendFilesToBackend(files, isMoodle, isCoursera);
-      console.log("Files uploaded successfully::", result);
+      const result = await handleSubmit(files, isMoodle, isCoursera);
+      //...
     } catch (error) {
-      console.error("Failed to upload files:", error);
+      //...
     }
   };
 
-  const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
-    onDrop,
-  });
+  const {
+    getRootProps: rootProps,
+    getInputProps: inputProps,
+    acceptedFiles,
+  } = useDropzone({ onDrop });
 
   return (
     <main>
@@ -52,11 +53,11 @@ export default function Landingpage() {
           />
         </div>
         <FileUpload
-          getRootProps={getRootProps}
-          getInputProps={getInputProps}
+          rootProps={rootProps}
+          inputProps={inputProps}
           acceptedFiles={acceptedFiles}
         />
-        <UploadButton onSubmit={handleSubmit} />
+        <UploadButton onSubmit={handleFormSubmit} />
       </div>
     </main>
   );
