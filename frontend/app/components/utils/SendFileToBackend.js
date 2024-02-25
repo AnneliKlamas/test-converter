@@ -1,15 +1,13 @@
-export default async function sendFilesToBackend(files, isMoodle, isCoursera) {
+export default async function sendFilesToBackend(files) {
   const formData = new FormData();
 
   files.forEach((file) => {
     formData.append("files", file);
   });
 
-  formData.append("isMoodle", isMoodle);
-  formData.append("isCoursera", isCoursera);
-
   for (let [key, value] of formData.entries()) {
   }
+
   try {
     const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL, {
       method: "POST",
