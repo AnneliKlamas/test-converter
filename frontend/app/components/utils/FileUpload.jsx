@@ -1,47 +1,65 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 
-export default function FileUpload() {
-  const [files, setFiles] = useState([]);
+const FileUploadMessage = ({ isFileAccepted }) => {
+  if (isFileAccepted === null) {
+    return <p>Click to upload or drag and drop .docx file</p>;
+  }
 
-  const onDrop = useCallback((acceptedFiles) => {
-    setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
-  }, []);
+  if (isFileAccepted) {
+    return <p className="text-green-500">File uploaded successfully</p>;
+  }
 
-  const {
-    getRootProps: rootProps,
-    getInputProps: inputProps,
-    acceptedFiles,
-  } = useDropzone({ onDrop, multiple: true });
+  return <p className="text-red-500">Please upload only .docx files.</p>;
+};
 
-  const allFilesAreDocx = acceptedFiles.every((file) =>
-    file.path.endsWith(".docx"),
+export default function FileUpload({ onFileUpload }) {
+  const onDrop = useCallback(
+    (acceptedFiles) => {
+      onFileUpload(acceptedFiles);
+    },
+    [onFileUpload],
   );
 
-  const borderColorClass = allFilesAreDocx ? "border-blue" : "border-red-500";
+  const { getRootProps, getInputProps, isDragActive, acceptedFiles } =
+    useDropzone({
+      onDrop,
+      multiple: false,
+      accept: {
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+          [".docx"],
+      },
+    });
 
-  const fileList = acceptedFiles.map((file, index) => (
-    <li key={`${file.path}-${index}`}>{file.path}</li>
-  ));
+  const isFileAccepted =
+    acceptedFiles.length > 0 && acceptedFiles[0].path.endsWith(".docx")
+      ? true
+      : acceptedFiles.length > 0
+      ? false
+      : null;
+
+  const borderColorClass =
+    isFileAccepted === null
+      ? "border-blue"
+      : isFileAccepted
+      ? "border-blue"
+      : "border-red-500";
 
   return (
     <div
-      {...rootProps()}
+      {...getRootProps()}
       className={`sm:w-[600px] w-80 h-64 border border-dotted ${borderColorClass} border-1 rounded-lg cursor-pointer flex flex-col justify-center items-center`}
     >
-      <input multiple {...inputProps()} />
-      {fileList.length > 0 && allFilesAreDocx ? (
-        <ul className="text-center">
-          <b>{fileList}</b>
-        </ul>
+      <input {...getInputProps()} />
+      {isDragActive ? (
+        <p>Drop the file here ...</p>
       ) : (
-        <div className="px-2">
-          {allFilesAreDocx ? (
-            <p>Click to upload or drag and drop .docx file</p>
-          ) : (
-            <p className="text-red-500">Please upload only .docx files.</p>
+        <>
+          {acceptedFiles.length > 0 && (
+            <ul className="text-center font-bold">{acceptedFiles[0].path}</ul>
           )}
-        </div>
+          <FileUploadMessage isFileAccepted={isFileAccepted} />
+        </>
       )}
     </div>
   );

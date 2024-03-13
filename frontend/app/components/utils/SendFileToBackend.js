@@ -1,13 +1,9 @@
-export default async function sendFilesToBackend(files) {
+export const sendFilesToBackend = async (files, outputFormat) => {
   const formData = new FormData();
 
-  files.forEach((file) => {
-    formData.append("files", file);
-  });
-
-  for (let [key, value] of formData.entries()) {
-  }
-
+  formData.append("files", files);
+  formData.append("outputFormat", outputFormat);
+  
   try {
     const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL, {
       method: "POST",
@@ -23,4 +19,4 @@ export default async function sendFilesToBackend(files) {
   } catch (error) {
     throw error;
   }
-}
+};

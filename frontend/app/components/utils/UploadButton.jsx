@@ -1,7 +1,6 @@
 import React from "react";
-import handleSubmit from "@/app/components/utils/SubmissionHandler";
 
-export default function UploadButton({ name }) {
+export default function UploadButton({ name, handleSubmit }) {
   return (
     <button
       onClick={handleSubmit}
