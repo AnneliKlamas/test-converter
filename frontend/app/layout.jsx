@@ -13,7 +13,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="h-full overflow-visible">
-      <body className={`${inter.className} relative flex min-w-[360px] flex-col bg-white`}>
+      <body className={`${inter.className} relative flex min-w-[360px] min-h-screen flex-col bg-white`}>
         <Navbar />
         {children}
         <Footer />
