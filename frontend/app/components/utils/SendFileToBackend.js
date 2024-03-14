@@ -1,11 +1,9 @@
 export const sendFilesToBackend = async (files, outputFormat) => {
   const formData = new FormData();
-
-  formData.append("files", files);
-  formData.append("outputFormat", outputFormat);
+  formData.append("file", files[0]);
   
   try {
-    const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/file/convert`, {
       method: "POST",
       body: formData,
     });
