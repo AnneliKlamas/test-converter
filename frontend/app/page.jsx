@@ -3,7 +3,7 @@ import Landingpage from "./components/sections/Landingpage";
 export default function Home() {
 
   return (
-    <main className="">
+    <main>
       <Landingpage />
     </main>
   );
