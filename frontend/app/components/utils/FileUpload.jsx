@@ -1,16 +1,17 @@
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
+import data from "../data/info.json";
 
 const FileUploadMessage = ({ isFileAccepted }) => {
   if (isFileAccepted === null) {
-    return <p>Click to upload or drag and drop .docx file</p>;
+    return <p>{data.fileupload.defaultMessage}</p>;
   }
 
-  if (isFileAccepted) {
-    return <p className="text-green-500">File uploaded successfully</p>;
+  if (!isFileAccepted) {
+    return <p className="text-red-500">{data.fileupload.fileNotAcceptable}</p>;
   }
 
-  return <p className="text-red-500">Please upload only .docx files.</p>;
+  return;
 };
 
 export default function FileUpload({ onFileUpload }) {
@@ -52,7 +53,7 @@ export default function FileUpload({ onFileUpload }) {
     >
       <input {...getInputProps()} />
       {isDragActive ? (
-        <p>Drop the file here ...</p>
+        <p>{data.fileupload.drop}</p>
       ) : (
         <>
           {acceptedFiles.length > 0 && (

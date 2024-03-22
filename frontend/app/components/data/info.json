@@ -1,0 +1,19 @@
+{
+  "fileupload": {
+    "fileNotAcceptable": "Please upload only .docx files",
+    "defaultMessage": "Add a .docx file here to upload",
+    "drop": "Drop the .docx file here"
+  },
+  "landing": {
+    "noFile": "No files uploaded",
+    "uploading": "Uploading your file...",
+    "uploaded": "File uploaded successfully!",
+    "uploadError": "There was an error uploading your file. Please try again.",
+    "download": "Download as",
+    "moodle": "Moodle XML",
+    "Coursera": "Coursera .docx"
+  },
+  "navbar": {
+    "documentation": "Documentation"
+  }
+}

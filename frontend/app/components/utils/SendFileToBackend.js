@@ -1,6 +1,6 @@
-export const sendFilesToBackend = async (files, outputFormat) => {
+export const sendFileToBackend = async (file, outputFormat) => {
   const formData = new FormData();
-  formData.append("file", files[0]);
+  formData.append("file", file[0]);
 
   try {
     const response = await fetch(
@@ -10,10 +10,6 @@ export const sendFilesToBackend = async (files, outputFormat) => {
         body: formData,
       },
     );
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
 
     return await response.json();
   } catch (error) {
