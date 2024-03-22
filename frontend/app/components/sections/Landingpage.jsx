@@ -1,50 +1,68 @@
 "use client";
-import React, { useState, useCallback } from "react";
-import EnvironmentSwitch from "../utils/EnvironmentSwitch";
-import UploadButton from "../utils/UploadButton";
-import FileUpload from "../utils/FileUpload";
-import { useDropzone } from "react-dropzone";
+
+import React, { useState } from "react";
+import UploadButton from "@/app/components/utils/UploadButton";
+import FileUpload from "@/app/components/utils/FileUpload";
+import { sendFileToBackend } from "../utils/SendFileToBackend";
+import { toast } from "react-toastify";
+import data from "../data/info.json";
 
 export default function Landingpage() {
-  const [isMoodle, setIsMoodle] = useState(false);
-  const [isCoursera, setIsCoursera] = useState(false);
-  const [files, setFiles] = useState([]);
+  const [file, setFiles] = useState(null);
 
-  const onDrop = useCallback((acceptedFiles) => {
-    console.log("Files:", acceptedFiles);
-    setFiles(acceptedFiles);
-  }, []);
+  const handleFileUpload = (uploadedFile) => {
+    setFiles(uploadedFile);
+  };
 
-  const handleSwitchChange = (event) => {
-    if (event.target.name === "moodle") {
-      setIsMoodle(event.target.checked);
-    } else {
-      setIsCoursera(event.target.checked);
+  const handleSubmit = async (outputFormat) => {
+    if (!file) {
+      toast.error(data.landing.noFile, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+      });
+      return;
     }
-  };
 
-  //send files to backend
-  const handleSubmit = async () => {
-    console.log("Uploading files:", files);
+    toast.promise(sendFileToBackend(file, outputFormat), {
+      pending: {
+        render: data.landing.uploading,
+        position: "top-right",
+        autoClose: false,
+        hideProgressBar: false,
+      },
+      success: {
+        render: data.landing.uploaded,
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+      },
+      error: {
+        render: data.landing.uploadError,
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+      },
+    });
   };
-
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
     <main>
-      <div className="flex flex-col gap-2 justify-center items-center pt-10">
-        <div className="text-3xl font-bold text-blue-500">
-          Select the download type/environment
+      <div className="flex flex-col gap-5 justify-center items-center pt-10">
+        <FileUpload onFileUpload={handleFileUpload} />
+        <div className="text-3xl text-center font-bold text-blue pt-10">
+          <p>{data.landing.download}</p>
         </div>
-        <div className="flex gap-20">
-          <EnvironmentSwitch
-            isMoodle={isMoodle}
-            isCoursera={isCoursera}
-            onSwitchChange={handleSwitchChange}
+        <div className="flex sm:flex-row flex-col sm:gap-32">
+          <UploadButton
+            name={data.landing.moodle}
+            handleSubmit={() => handleSubmit("moodle")}
+          />
+          <UploadButton
+            name={data.landing.Coursera}
+            handleSubmit={() => handleSubmit("coursera")}
           />
         </div>
-        <FileUpload getRootProps={getRootProps} getInputProps={getInputProps} />
-        <UploadButton onSubmit={handleSubmit} />
       </div>
     </main>
   );

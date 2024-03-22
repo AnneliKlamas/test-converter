@@ -1,12 +1,12 @@
 import React from "react";
 
-export default function UploadButton({ onSubmit }) {
+export default function UploadButton({ name, handleSubmit }) {
   return (
     <button
-      onClick={onSubmit}
-      className="mt-4 p-2 bg-blue-500 rounded text-white"
+      onClick={handleSubmit}
+      className="mt-4 px-7 p-2 text-blue rounded border-2 border-blue hover:bg-blue hover:text-white transition duration-300 ease-in-out"
     >
-      Upload
+      {name}
     </button>
   );
 }
