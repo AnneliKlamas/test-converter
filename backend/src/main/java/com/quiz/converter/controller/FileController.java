@@ -24,7 +24,7 @@ public class FileController {
 
     @PostMapping
     public ResponseEntity<byte[]> convertDocFile(@RequestBody MultipartFile file) throws IOException, ParserConfigurationException, TransformerException {
-        var convertedFileName = file.getName() + "_moodle.xml";
+        var convertedFileName = file.getOriginalFilename().replace(".docx", "") + "_moodle.xml";
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_XML)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + convertedFileName)

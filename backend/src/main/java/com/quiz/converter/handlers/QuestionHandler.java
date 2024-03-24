@@ -14,11 +14,10 @@ public class QuestionHandler {
     }
 
     public Optional<Question> handleQuestion(String text) {
-
+        Optional<Question> question = Optional.empty();
         if (!state.getAnswerOptions().isEmpty()) {
-            var question = state.createQuestion();
+            question = Optional.of(state.createQuestion());
             state.cleanState();
-            return Optional.of(question);
         }
 
         if (text.toLowerCase().contains("single choice")) {
@@ -31,6 +30,6 @@ public class QuestionHandler {
         } catch (Exception e) {
             state.setName(text);
         }
-        return Optional.empty();
+        return question;
     }
 }

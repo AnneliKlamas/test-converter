@@ -16,9 +16,7 @@ public class QuestionState {
     private QuestionType type = QuestionType.UNKNOWN;
     private QuestionDescription description = new QuestionDescription();
     private List<Answer> answerOptions = new ArrayList<>();
-    private List<String> descriptionPictures = new ArrayList<>();
     private ParagraphType previousParagraphType = ParagraphType.EMPTY_TEXT;
-    private String questionFeedbackText = "";
 
     public void cleanState() {
         name = "";
@@ -26,9 +24,7 @@ public class QuestionState {
         type = QuestionType.UNKNOWN;
         description = new QuestionDescription();
         answerOptions = new ArrayList<>();
-        descriptionPictures = new ArrayList<>();
         previousParagraphType = ParagraphType.EMPTY_TEXT;
-        questionFeedbackText = "";
     }
 
     public Question createQuestion() {

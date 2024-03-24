@@ -47,7 +47,7 @@ public class MoodleXmlCreatorService {
     }
 
     private static void addQuestion(Question question, Document doc, Element rootElement, int pictureNumber) {
-        Element questionElem = doc.createElement("description");
+        Element questionElem = doc.createElement("question");
 
         setQuestionType(question, rootElement, questionElem);
         setQuestionName(question, doc, questionElem);
@@ -106,14 +106,14 @@ public class MoodleXmlCreatorService {
         questionElem.appendChild(answerElement);
 
         Element answerText = doc.createElement("text");
-        answerText.setTextContent(answer.text());
+        answerText.setTextContent(answer.getText());
         answerElement.appendChild(answerText);
 
-        if (!answer.feedback().isEmpty()) {
+        if (answer.getFeedback() != null && answer.getFeedback().isPresent()) {
             Element feedbackElement = doc.createElement("feedback");
             questionElem.appendChild(feedbackElement);
             Element feedbackText = doc.createElement("text");
-            feedbackText.setTextContent(answer.feedback());
+            feedbackText.setTextContent(answer.getFeedback().get());
             feedbackElement.appendChild(feedbackText);
         }
     }

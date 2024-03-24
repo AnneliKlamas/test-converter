@@ -37,7 +37,6 @@ public class FileUploadService {
 
             if (paragraphType.equals(ParagraphType.QUESTION_DETAILS)) {
                 var questionHandler = new QuestionHandler(state);
-                state.getDescriptionPictures().addAll(paragraphPictures);
                 questionHandler.handleQuestion(text).ifPresent(questions::add);
                 state.setPreviousParagraphType(paragraphType);
                 continue;
@@ -45,17 +44,19 @@ public class FileUploadService {
 
             if (paragraphType == ParagraphType.QUESTION_DESCRIPTION) {
                 state.setDescription(new QuestionDescription(text, paragraphPictures));
+                state.setPreviousParagraphType(paragraphType);
                 continue;
             }
             if (paragraphType == ParagraphType.FEEDBACK || paragraphType == ParagraphType.DEFAULT_FEEDBACK) {
                 var feedbackHandler = new FeedbackHandler(state);
                 feedbackHandler.add(text, paragraphType);
+                state.setPreviousParagraphType(paragraphType);
                 continue;
             }
 
             if (paragraphType == ParagraphType.ANSWER_OPTION) {
                 state.getAnswerOptions().add(createAnswerFromString(text, state, paragraphPictures));
-                state.cleanState();
+                state.setPreviousParagraphType(paragraphType);
             }
         }
 
@@ -69,7 +70,7 @@ public class FileUploadService {
     private static void handleEmptyTextParagraph(List<String> paragraphPictures, QuestionState state) {
         if (!paragraphPictures.isEmpty()) {
             if (state.getPreviousParagraphType() == ParagraphType.ANSWER_OPTION) {
-                state.getAnswerOptions().get(state.getAnswerOptions().size() - 1).pictures().addAll(paragraphPictures);
+                state.getAnswerOptions().get(state.getAnswerOptions().size() - 1).getPictures().addAll(paragraphPictures);
             } else if (state.getPreviousParagraphType() == ParagraphType.QUESTION_DESCRIPTION) {
                 state.getDescription().getPictures().addAll(paragraphPictures);
             }
@@ -77,9 +78,9 @@ public class FileUploadService {
     }
 
     private ParagraphType getParagraphType(String text, QuestionState state) {
-        if (text.replaceAll("\t", "").isEmpty()) return ParagraphType.EMPTY_TEXT;
+        if (text.replaceAll("\t", "").isEmpty() || text.replaceAll("\n", "").isEmpty()) return ParagraphType.EMPTY_TEXT;
         var lowerCaseText = text.toLowerCase().strip();
-        if (lowerCaseText.startsWith("description")) return ParagraphType.QUESTION_DETAILS;
+        if (lowerCaseText.startsWith("question")) return ParagraphType.QUESTION_DETAILS;
         if (state.getPreviousParagraphType().equals(ParagraphType.QUESTION_DETAILS))
             return ParagraphType.QUESTION_DESCRIPTION;
         if (lowerCaseText.startsWith("feedback")) return ParagraphType.FEEDBACK;
@@ -103,18 +104,13 @@ public class FileUploadService {
 
     private Answer createAnswerFromString(String text, QuestionState state, List<String> paragraphPictures) {
         var isCorrectAnswer = text.strip().startsWith("*");
+        var indexOfColon = !text.contains(":") ? Integer.MAX_VALUE : text.indexOf(":");
+        var indexOfParenthesis = !text.contains(")") ? Integer.MAX_VALUE : text.indexOf(")");
 
-        var indexOfColon = text.indexOf(":");
-        var indexOfParenthesis = text.indexOf(")");
-
-        if (indexOfColon != -1 && indexOfParenthesis != -1) {
-            if (indexOfColon < indexOfParenthesis) {
-                text = text.substring(indexOfColon + 1);
-            } else {
-                text = text.substring(indexOfParenthesis + 1);
-            }
+        if (text.contains(")") || text.contains(":")) {
+            text = text.substring(Math.min(indexOfColon, indexOfParenthesis) + 1);
         }
 
-        return new Answer(text, state.getQuestionFeedbackText(), isCorrectAnswer, paragraphPictures);
+        return new Answer(text, null, isCorrectAnswer, paragraphPictures);
     }
 }

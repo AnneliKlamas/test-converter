@@ -17,3 +17,9 @@ Feedback doesn't support pictures.
 Answers and question description can have pictures.
 
 Pictures are always added to the end of the text.
+
+\* marks right answers.
+
+Supports only single choice questions.
+
+Doesn't support multiparagraph question descriptions.
