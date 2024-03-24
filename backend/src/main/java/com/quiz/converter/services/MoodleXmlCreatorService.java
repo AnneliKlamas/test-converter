@@ -45,15 +45,16 @@ public class MoodleXmlCreatorService {
 
     }
 
-    private static void addQuestion(Question question, Document doc, Element rootElement, int pictureNumber) {
+    private static void addQuestion(Question question, Document doc, Element rootElement, int questionNr) {
         var questionElem = doc.createElement("question");
 
         setQuestionType(question, rootElement, questionElem);
         setQuestionName(question, doc, questionElem);
-        setQuestionDescription(question, doc, pictureNumber, questionElem);
+        addQuestionDescription(question, doc, questionNr, questionElem);
 
+        var answerNr = 1;
         for (var answer : question.answerOptions()) {
-            addAnswer(doc, answer, questionElem);
+            addAnswer(doc, answer, questionElem, questionNr, answerNr++);
         }
 
         if (question.type().equals(QuestionType.SINGLE_CHOICE)) {
@@ -67,21 +68,21 @@ public class MoodleXmlCreatorService {
         }
     }
 
-    private static void setQuestionDescription(Question question, Document doc, int pictureNumber, Element questionElem) {
-        var questionText = doc.createElement("questiontext");
+    private static void addQuestionDescription(Question question, Document doc, int pictureNumber, Element questionElem) {
+        var questionTextElem = doc.createElement("questiontext");
 
-        questionText.setAttribute("format", "html");
-        questionElem.appendChild(questionText);
+        questionTextElem.setAttribute("format", "html");
+        questionElem.appendChild(questionTextElem);
 
-        var text = doc.createElement("text");
-        var paragraphContent = new StringBuilder(question.description().getText());
+        var textElem = doc.createElement("text");
+        var descriptionContent = new StringBuilder(question.description().getText());
 
         for (var picture : question.description().getPictures()) {
-            paragraphContent.append(addPicture(doc, pictureNumber, picture, questionText));
+            descriptionContent.append(addPicture(doc, "D" + pictureNumber, picture, questionTextElem));
         }
 
-        text.setTextContent(paragraphContent.toString());
-        questionText.appendChild(text);
+        textElem.setTextContent(descriptionContent.toString());
+        questionTextElem.appendChild(textElem);
     }
 
     private static void setQuestionName(Question question, Document doc, Element questionElem) {
@@ -99,13 +100,21 @@ public class MoodleXmlCreatorService {
         rootElem.appendChild(questionElem);
     }
 
-    private static void addAnswer(Document doc, Answer answer, Element questionElem) {
+    private static void addAnswer(Document doc, Answer answer, Element questionElem, int questionNr, int answerNr) {
         var answerElem = doc.createElement("answer");
+
         answerElem.setAttribute("fraction", answer.isCorrect() ? "100" : "0");
+        answerElem.setAttribute("format", "html");
         questionElem.appendChild(answerElem);
 
         var textElem = doc.createElement("text");
-        textElem.setTextContent(answer.getText());
+        var answerContent = new StringBuilder(answer.getText());
+
+        for (var picture : answer.getPictures()) {
+            answerContent.append(addPicture(doc, "A" + questionNr + answerNr, picture, answerElem));
+        }
+
+        textElem.setTextContent(answerContent.toString());
         answerElem.appendChild(textElem);
 
         if (answer.getFeedback() != null && answer.getFeedback().isPresent()) {
@@ -125,13 +134,13 @@ public class MoodleXmlCreatorService {
         generalFeedbackElem.appendChild(generalFeedbackTextElem);
     }
 
-    private static String addPicture(Document doc, int pictureNumber, String picture, Element questionText) {
+    private static String addPicture(Document doc, String pictureNumber, String picture, Element parentElem) {
         var paragraphPictureNr = 0;
         var fileElem = doc.createElement("file");
         fileElem.setAttribute("name", "moodle_" + pictureNumber + paragraphPictureNr + ".png");
         fileElem.setAttribute("encoding", "base64");
         fileElem.setTextContent(picture);
-        questionText.appendChild(fileElem);
+        parentElem.appendChild(fileElem);
         return "<br><img src=\"@@PLUGINFILE@@/moodle_" +
                 pictureNumber + paragraphPictureNr +
                 ".png\" alt=\"" +
