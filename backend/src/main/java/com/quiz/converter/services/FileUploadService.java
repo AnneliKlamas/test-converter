@@ -30,7 +30,7 @@ public class FileUploadService {
             var paragraphPictures = handleParagraphPictures(paragraph);
             var paragraphType = getParagraphType(text, state);
 
-            if (paragraphType == ParagraphType.EMPTY_TEXT) {
+            if (paragraphType.equals(ParagraphType.EMPTY_TEXT)) {
                 handleEmptyTextParagraph(paragraphPictures, state);
                 continue;
             }
@@ -42,19 +42,19 @@ public class FileUploadService {
                 continue;
             }
 
-            if (paragraphType == ParagraphType.QUESTION_DESCRIPTION) {
+            if (paragraphType.equals(ParagraphType.QUESTION_DESCRIPTION)) {
                 state.setDescription(new QuestionDescription(text, paragraphPictures));
                 state.setPreviousParagraphType(paragraphType);
                 continue;
             }
-            if (paragraphType == ParagraphType.FEEDBACK || paragraphType == ParagraphType.DEFAULT_FEEDBACK) {
+            if (paragraphType.equals(ParagraphType.FEEDBACK) || paragraphType.equals(ParagraphType.DEFAULT_FEEDBACK)) {
                 var feedbackHandler = new FeedbackHandler(state);
                 feedbackHandler.add(text, paragraphType);
                 state.setPreviousParagraphType(paragraphType);
                 continue;
             }
 
-            if (paragraphType == ParagraphType.ANSWER_OPTION) {
+            if (paragraphType.equals(ParagraphType.ANSWER_OPTION)) {
                 state.getAnswerOptions().add(createAnswerFromString(text, paragraphPictures));
                 state.setPreviousParagraphType(paragraphType);
             }
@@ -69,9 +69,9 @@ public class FileUploadService {
 
     private static void handleEmptyTextParagraph(List<String> paragraphPictures, QuestionState state) {
         if (!paragraphPictures.isEmpty()) {
-            if (state.getPreviousParagraphType() == ParagraphType.ANSWER_OPTION) {
+            if (state.getPreviousParagraphType().equals(ParagraphType.ANSWER_OPTION)) {
                 state.getAnswerOptions().get(state.getAnswerOptions().size() - 1).getPictures().addAll(paragraphPictures);
-            } else if (state.getPreviousParagraphType() == ParagraphType.QUESTION_DESCRIPTION) {
+            } else if (state.getPreviousParagraphType().equals(ParagraphType.QUESTION_DESCRIPTION)) {
                 state.getDescription().getPictures().addAll(paragraphPictures);
             }
         }

@@ -19,11 +19,11 @@ import java.util.List;
 @Service
 public class MoodleXmlCreatorService {
     public byte[] createMoodleXml(List<Question> questions) throws ParserConfigurationException, TransformerException {
-        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+        var docFactory = DocumentBuilderFactory.newInstance();
+        var docBuilder = docFactory.newDocumentBuilder();
 
-        Document doc = docBuilder.newDocument();
-        Element rootElement = doc.createElement("quiz");
+        var doc = docBuilder.newDocument();
+        var rootElement = doc.createElement("quiz");
         doc.appendChild(rootElement);
 
         var questionNr = 1;
@@ -32,14 +32,14 @@ public class MoodleXmlCreatorService {
             questionNr++;
         }
 
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
+        var transformerFactory = TransformerFactory.newInstance();
+        var transformer = transformerFactory.newTransformer();
 
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        DOMSource source = new DOMSource(doc);
+        var source = new DOMSource(doc);
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        StreamResult result = new StreamResult(bos);
+        var bos = new ByteArrayOutputStream();
+        var result = new StreamResult(bos);
         transformer.transform(source, result);
 
         return bos.toByteArray();
@@ -47,7 +47,7 @@ public class MoodleXmlCreatorService {
     }
 
     private static void addQuestion(Question question, Document doc, Element rootElement, int pictureNumber) {
-        Element questionElem = doc.createElement("question");
+        var questionElem = doc.createElement("question");
 
         setQuestionType(question, rootElement, questionElem);
         setQuestionName(question, doc, questionElem);
@@ -57,8 +57,8 @@ public class MoodleXmlCreatorService {
             addAnswer(doc, answer, questionElem);
         }
 
-        if (question.type() == QuestionType.SINGLE_CHOICE) {
-            Element singleChoiceTagElem = doc.createElement("single");
+        if (question.type().equals(QuestionType.SINGLE_CHOICE)) {
+            var singleChoiceTagElem = doc.createElement("single");
             singleChoiceTagElem.setTextContent("true");
             questionElem.appendChild(singleChoiceTagElem);
         }
@@ -69,13 +69,13 @@ public class MoodleXmlCreatorService {
     }
 
     private static void setQuestionDescription(Question question, Document doc, int pictureNumber, Element questionElem) {
-        Element questionText = doc.createElement("questiontext");
-        questionText.setAttribute("format", "html");
+        var questionText = doc.createElement("questiontext");
 
+        questionText.setAttribute("format", "html");
         questionElem.appendChild(questionText);
 
-        Element text = doc.createElement("text");
-        StringBuilder paragraphContent = new StringBuilder(question.description().getText());
+        var text = doc.createElement("text");
+        var paragraphContent = new StringBuilder(question.description().getText());
 
         for (var picture : question.description().getPictures()) {
             paragraphContent.append(addPicture(doc, pictureNumber, picture, questionText));
@@ -86,49 +86,49 @@ public class MoodleXmlCreatorService {
     }
 
     private static void setQuestionName(Question question, Document doc, Element questionElem) {
-        Element name = doc.createElement("name");
-        questionElem.appendChild(name);
-        Element nameText = doc.createElement("text");
-        nameText.setTextContent(question.name());
-        name.appendChild(nameText);
+        var nameElem = doc.createElement("name");
+        questionElem.appendChild(nameElem);
+        var textElem = doc.createElement("text");
+        textElem.setTextContent(question.name());
+        nameElem.appendChild(textElem);
     }
 
-    private static void setQuestionType(Question question, Element rootElement, Element questionElem) {
+    private static void setQuestionType(Question question, Element rootElem, Element questionElem) {
         var type = "";
-        if (question.type() == QuestionType.SINGLE_CHOICE) type = "multichoice";
+        if (question.type().equals(QuestionType.SINGLE_CHOICE)) type = "multichoice";
         questionElem.setAttribute("type", type);
-        rootElement.appendChild(questionElem);
+        rootElem.appendChild(questionElem);
     }
 
     private static void addAnswer(Document doc, Answer answer, Element questionElem) {
-        Element answerElement = doc.createElement("answer");
-        answerElement.setAttribute("fraction", answer.isCorrect() ? "100" : "0");
-        questionElem.appendChild(answerElement);
+        var answerElem = doc.createElement("answer");
+        answerElem.setAttribute("fraction", answer.isCorrect() ? "100" : "0");
+        questionElem.appendChild(answerElem);
 
-        Element answerText = doc.createElement("text");
-        answerText.setTextContent(answer.getText());
-        answerElement.appendChild(answerText);
+        var textElem = doc.createElement("text");
+        textElem.setTextContent(answer.getText());
+        answerElem.appendChild(textElem);
 
         if (answer.getFeedback() != null && answer.getFeedback().isPresent()) {
-            Element feedbackElement = doc.createElement("feedback");
-            questionElem.appendChild(feedbackElement);
-            Element feedbackText = doc.createElement("text");
-            feedbackText.setTextContent(answer.getFeedback().get());
-            feedbackElement.appendChild(feedbackText);
+            var feedbackElem = doc.createElement("feedback");
+            questionElem.appendChild(feedbackElem);
+            var feedbackTextElem = doc.createElement("text");
+            feedbackTextElem.setTextContent(answer.getFeedback().get());
+            feedbackElem.appendChild(feedbackTextElem);
         }
     }
 
     private static void addFeedback(Document doc, Element questionElem, String feedback) {
-        Element generalFeedbackElement = doc.createElement("generalfeedback");
-        questionElem.appendChild(generalFeedbackElement);
-        Element generalFeedbackTextElement = doc.createElement("text");
-        generalFeedbackTextElement.setTextContent(feedback);
-        generalFeedbackElement.appendChild(generalFeedbackTextElement);
+        var generalFeedbackElem = doc.createElement("generalfeedback");
+        questionElem.appendChild(generalFeedbackElem);
+        var generalFeedbackTextElem = doc.createElement("text");
+        generalFeedbackTextElem.setTextContent(feedback);
+        generalFeedbackElem.appendChild(generalFeedbackTextElem);
     }
 
     private static String addPicture(Document doc, int pictureNumber, String picture, Element questionText) {
         var paragraphPictureNr = 0;
-        Element fileElem = doc.createElement("file");
+        var fileElem = doc.createElement("file");
         fileElem.setAttribute("name", "moodle_" + pictureNumber + paragraphPictureNr + ".png");
         fileElem.setAttribute("encoding", "base64");
         fileElem.setTextContent(picture);
