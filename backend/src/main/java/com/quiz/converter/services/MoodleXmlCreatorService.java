@@ -75,13 +75,13 @@ public class MoodleXmlCreatorService {
         questionElem.appendChild(questionText);
 
         Element text = doc.createElement("text");
-        var paragraphContent = question.description().getText();
+        StringBuilder paragraphContent = new StringBuilder(question.description().getText());
 
         for (var picture : question.description().getPictures()) {
-            paragraphContent += addPicture(doc, pictureNumber, picture, questionText);
+            paragraphContent.append(addPicture(doc, pictureNumber, picture, questionText));
         }
 
-        text.setTextContent(paragraphContent);
+        text.setTextContent(paragraphContent.toString());
         questionText.appendChild(text);
     }
 

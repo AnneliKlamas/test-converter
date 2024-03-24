@@ -55,7 +55,7 @@ public class FileUploadService {
             }
 
             if (paragraphType == ParagraphType.ANSWER_OPTION) {
-                state.getAnswerOptions().add(createAnswerFromString(text, state, paragraphPictures));
+                state.getAnswerOptions().add(createAnswerFromString(text, paragraphPictures));
                 state.setPreviousParagraphType(paragraphType);
             }
         }
@@ -102,7 +102,7 @@ public class FileUploadService {
         return paragraphPictures;
     }
 
-    private Answer createAnswerFromString(String text, QuestionState state, List<String> paragraphPictures) {
+    private Answer createAnswerFromString(String text, List<String> paragraphPictures) {
         var isCorrectAnswer = text.strip().startsWith("*");
         var indexOfColon = !text.contains(":") ? Integer.MAX_VALUE : text.indexOf(":");
         var indexOfParenthesis = !text.contains(")") ? Integer.MAX_VALUE : text.indexOf(")");
