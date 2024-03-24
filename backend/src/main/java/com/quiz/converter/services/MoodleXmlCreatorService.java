@@ -1,5 +1,6 @@
 package com.quiz.converter.services;
 
+import com.quiz.converter.models.Answer;
 import com.quiz.converter.models.Question;
 import com.quiz.converter.models.enums.QuestionType;
 import org.springframework.stereotype.Service;
@@ -13,8 +14,6 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -23,78 +22,14 @@ public class MoodleXmlCreatorService {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-        var pictureNumber = 0;
-
-        // root elements
         Document doc = docBuilder.newDocument();
         Element rootElement = doc.createElement("quiz");
         doc.appendChild(rootElement);
 
+        var questionNr = 1;
         for (var question : questions) {
-            Element questionElem = doc.createElement("question");
-
-            var type = "";
-            if (question.type() == QuestionType.SINGLE_CHOICE) type = "multichoice";
-            questionElem.setAttribute("type", type);
-            rootElement.appendChild(questionElem);
-
-            Element name = doc.createElement("name");
-            questionElem.appendChild(name);
-            Element nameText = doc.createElement("text");
-            nameText.setTextContent(question.name());
-            name.appendChild(nameText);
-
-            Element questionText = doc.createElement("questiontext"); //TODO: bold should be also bold on import
-            questionText.setAttribute("format", "html");
-
-            questionElem.appendChild(questionText);
-
-            Element text = doc.createElement("text"); //TODO: remove hardcoded question text
-            //text.setTextContent(question.question());
-            text.setTextContent(question.question() + "<br><img src=\"@@PLUGINFILE@@/moodle_" + pictureNumber + ".png\" alt=\"kass\" width=\"225\" height=\"225\" class=\"img-fluid atto_image_button_text-bottom\"><br>");
-
-            questionText.appendChild(text);
-
-            for (var picture : question.pictures()) { //TODO: can image be a link?
-
-                Element fileElem = doc.createElement("file");
-                fileElem.setAttribute("name", "moodle_" + pictureNumber + ".png");
-                fileElem.setAttribute("encoding", "base64"); //TODO: what happens if there are multiple pictures?
-                fileElem.setTextContent(picture); //TODO: Check url things
-                questionText.appendChild(fileElem);
-            }
-
-            for (var answer : question.answerOptions()) {
-                Element answerElement = doc.createElement("answer");
-                answerElement.setAttribute("fraction", answer.isCorrect() ? "100" : "0");
-                questionElem.appendChild(answerElement);
-
-                Element answerText = doc.createElement("text");
-                answerText.setTextContent(answer.text());
-                answerElement.appendChild(answerText);
-
-                if (!answer.feedback().isEmpty()) {
-                    Element feedbackElement = doc.createElement("feedback");
-                    questionElem.appendChild(feedbackElement);
-                    Element feedbackText = doc.createElement("text");
-                    feedbackText.setTextContent(answer.feedback());
-                    feedbackElement.appendChild(feedbackText);
-                }
-            }
-
-            if (question.type() == QuestionType.SINGLE_CHOICE) {
-                Element singleChoiceTagElem = doc.createElement("single");
-                singleChoiceTagElem.setTextContent("true");
-                questionElem.appendChild(singleChoiceTagElem);
-            }
-
-            if (!question.feedback().isEmpty()) {
-                Element generalFeedbackElement = doc.createElement("generalfeedback");
-                questionElem.appendChild(generalFeedbackElement);
-                Element generalFeedbackTextElement = doc.createElement("text");
-                generalFeedbackTextElement.setTextContent(question.feedback());
-                generalFeedbackElement.appendChild(generalFeedbackTextElement);
-            }
+            addQuestion(question, doc, rootElement, questionNr);
+            questionNr++;
         }
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -102,39 +37,106 @@ public class MoodleXmlCreatorService {
 
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         DOMSource source = new DOMSource(doc);
-        StreamResult result = new StreamResult();
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        StreamResult result1 = new StreamResult(bos);
-        transformer.transform(source, result1);
-        byte[] array = bos.toByteArray();
+        StreamResult result = new StreamResult(bos);
+        transformer.transform(source, result);
 
-        return array;
-
-
-        // write dom document to a file
-        /*try (FileOutputStream output =
-                     new FileOutputStream("C:\\Users\\Anneli\\Desktop\\thesis\\test-converter\\backend\\src\\main\\resources\\static\\test_moodle.xml")) {
-            writeXml(doc, output);
-        } catch (IOException | TransformerException e) {
-            e.printStackTrace();
-        }*/
+        return bos.toByteArray();
 
     }
 
-    // write doc to output stream
-    private static void writeXml(Document doc,
-                                 FileOutputStream output)
-            throws TransformerException {
+    private static void addQuestion(Question question, Document doc, Element rootElement, int pictureNumber) {
+        Element questionElem = doc.createElement("description");
 
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
+        setQuestionType(question, rootElement, questionElem);
+        setQuestionName(question, doc, questionElem);
+        setQuestionDescription(question, doc, pictureNumber, questionElem);
 
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        DOMSource source = new DOMSource(doc);
-        StreamResult result = new StreamResult(output);
+        for (var answer : question.answerOptions()) {
+            addAnswer(doc, answer, questionElem);
+        }
 
-        transformer.transform(source, result);
+        if (question.type() == QuestionType.SINGLE_CHOICE) {
+            Element singleChoiceTagElem = doc.createElement("single");
+            singleChoiceTagElem.setTextContent("true");
+            questionElem.appendChild(singleChoiceTagElem);
+        }
 
+        if (!question.feedback().isEmpty()) {
+            addFeedback(doc, questionElem, question.feedback());
+        }
+    }
+
+    private static void setQuestionDescription(Question question, Document doc, int pictureNumber, Element questionElem) {
+        Element questionText = doc.createElement("questiontext");
+        questionText.setAttribute("format", "html");
+
+        questionElem.appendChild(questionText);
+
+        Element text = doc.createElement("text");
+        var paragraphContent = question.description().getText();
+
+        for (var picture : question.description().getPictures()) {
+            paragraphContent += addPicture(doc, pictureNumber, picture, questionText);
+        }
+
+        text.setTextContent(paragraphContent);
+        questionText.appendChild(text);
+    }
+
+    private static void setQuestionName(Question question, Document doc, Element questionElem) {
+        Element name = doc.createElement("name");
+        questionElem.appendChild(name);
+        Element nameText = doc.createElement("text");
+        nameText.setTextContent(question.name());
+        name.appendChild(nameText);
+    }
+
+    private static void setQuestionType(Question question, Element rootElement, Element questionElem) {
+        var type = "";
+        if (question.type() == QuestionType.SINGLE_CHOICE) type = "multichoice";
+        questionElem.setAttribute("type", type);
+        rootElement.appendChild(questionElem);
+    }
+
+    private static void addAnswer(Document doc, Answer answer, Element questionElem) {
+        Element answerElement = doc.createElement("answer");
+        answerElement.setAttribute("fraction", answer.isCorrect() ? "100" : "0");
+        questionElem.appendChild(answerElement);
+
+        Element answerText = doc.createElement("text");
+        answerText.setTextContent(answer.text());
+        answerElement.appendChild(answerText);
+
+        if (!answer.feedback().isEmpty()) {
+            Element feedbackElement = doc.createElement("feedback");
+            questionElem.appendChild(feedbackElement);
+            Element feedbackText = doc.createElement("text");
+            feedbackText.setTextContent(answer.feedback());
+            feedbackElement.appendChild(feedbackText);
+        }
+    }
+
+    private static void addFeedback(Document doc, Element questionElem, String feedback) {
+        Element generalFeedbackElement = doc.createElement("generalfeedback");
+        questionElem.appendChild(generalFeedbackElement);
+        Element generalFeedbackTextElement = doc.createElement("text");
+        generalFeedbackTextElement.setTextContent(feedback);
+        generalFeedbackElement.appendChild(generalFeedbackTextElement);
+    }
+
+    private static String addPicture(Document doc, int pictureNumber, String picture, Element questionText) {
+        var paragraphPictureNr = 0;
+        Element fileElem = doc.createElement("file");
+        fileElem.setAttribute("name", "moodle_" + pictureNumber + paragraphPictureNr + ".png");
+        fileElem.setAttribute("encoding", "base64");
+        fileElem.setTextContent(picture);
+        questionText.appendChild(fileElem);
+        return "<br><img src=\"@@PLUGINFILE@@/moodle_" +
+                pictureNumber + paragraphPictureNr +
+                ".png\" alt=\"" +
+                pictureNumber + paragraphPictureNr +
+                "\" width=\"225\" height=\"225\" class=\"img-fluid atto_image_button_text-bottom\"><br>";
     }
 }
