@@ -31,17 +31,3 @@ public class FileController {
                 .body(service.convertDocToMoodle(file));
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
