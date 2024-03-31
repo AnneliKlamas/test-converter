@@ -25,46 +25,39 @@ public class FileUploadService {
         var state = new QuestionState();
         var questions = new ArrayList<Question>();
 
-        for (XWPFParagraph paragraph : docx.getParagraphs()) {
-            var text = paragraph.getParagraphText();
-            var paragraphPictures = handleParagraphPictures(paragraph);
-            var paragraphType = getParagraphType(text, state);
+        docx.getParagraphs().forEach(paragraph -> handleParagraph(state, questions, paragraph));
 
-            if (paragraphType.equals(ParagraphType.EMPTY_TEXT)) {
-                handleEmptyTextParagraph(paragraphPictures, state);
-                continue;
-            }
+        if (!state.getAnswerOptions().isEmpty()) questions.add(state.createQuestion());
 
-            if (paragraphType.equals(ParagraphType.QUESTION_DETAILS)) {
+        return questions;
+    }
+
+    private void handleParagraph(QuestionState state, ArrayList<Question> questions, XWPFParagraph paragraph) {
+        var text = paragraph.getParagraphText();
+        var paragraphPictures = handleParagraphPictures(paragraph);
+        var paragraphType = getParagraphType(text, state);
+
+        switch (paragraphType) {
+            case EMPTY_TEXT -> handleEmptyTextParagraph(paragraphPictures, state);
+            case QUESTION_DETAILS -> {
                 var questionHandler = new QuestionHandler(state);
                 questionHandler.handleQuestion(text).ifPresent(questions::add);
                 state.setPreviousParagraphType(paragraphType);
-                continue;
             }
-
-            if (paragraphType.equals(ParagraphType.QUESTION_DESCRIPTION)) {
+            case QUESTION_DESCRIPTION -> {
                 state.setDescription(new QuestionDescription(text, paragraphPictures));
                 state.setPreviousParagraphType(paragraphType);
-                continue;
             }
-            if (paragraphType.equals(ParagraphType.FEEDBACK) || paragraphType.equals(ParagraphType.DEFAULT_FEEDBACK)) {
+            case FEEDBACK, DEFAULT_FEEDBACK -> {
                 var feedbackHandler = new FeedbackHandler(state);
                 feedbackHandler.add(text, paragraphType);
                 state.setPreviousParagraphType(paragraphType);
-                continue;
             }
-
-            if (paragraphType.equals(ParagraphType.ANSWER_OPTION)) {
+            case ANSWER_OPTION -> {
                 state.getAnswerOptions().add(createAnswerFromString(text, paragraphPictures));
                 state.setPreviousParagraphType(paragraphType);
             }
         }
-
-        if (!state.getAnswerOptions().isEmpty()) {
-            questions.add(state.createQuestion());
-        }
-
-        return questions;
     }
 
     private static void handleEmptyTextParagraph(List<String> paragraphPictures, QuestionState state) {

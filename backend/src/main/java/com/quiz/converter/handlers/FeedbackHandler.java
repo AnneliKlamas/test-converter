@@ -13,11 +13,12 @@ public class FeedbackHandler {
     }
 
     public void add(String text, ParagraphType paragraphType) {
-        if (paragraphType.equals(ParagraphType.DEFAULT_FEEDBACK)) {
-            state.setDefaultFeedback(text.toLowerCase().replace("default feedback:", "").strip());
-        } else if (paragraphType.equals(ParagraphType.FEEDBACK)) {
-            var feedbackText = text.toLowerCase().replace("feedback", "").strip().replace(":", "").strip();
-            state.getAnswerOptions().get(state.getAnswerOptions().size() - 1).setFeedback(Optional.of(feedbackText));
+        switch (paragraphType) {
+            case FEEDBACK -> state.setDefaultFeedback(text.toLowerCase().replace("default feedback:", "").strip());
+            case DEFAULT_FEEDBACK -> {
+                var feedbackText = text.toLowerCase().replace("feedback", "").strip().replace(":", "").strip();
+                state.getAnswerOptions().get(state.getAnswerOptions().size() - 1).setFeedback(Optional.of(feedbackText));
+            }
         }
     }
 }
