@@ -14,8 +14,9 @@ public class FeedbackHandler {
 
     public void add(String text, ParagraphType paragraphType) {
         switch (paragraphType) {
-            case FEEDBACK -> state.setDefaultFeedback(text.toLowerCase().replace("default feedback:", "").strip());
-            case DEFAULT_FEEDBACK -> {
+            case DEFAULT_FEEDBACK ->
+                    state.setDefaultFeedback(text.toLowerCase().replace("default feedback:", "").strip());
+            case FEEDBACK -> {
                 var feedbackText = text.toLowerCase().replace("feedback", "").strip().replace(":", "").strip();
                 state.getAnswerOptions().get(state.getAnswerOptions().size() - 1).setFeedback(Optional.of(feedbackText));
             }
