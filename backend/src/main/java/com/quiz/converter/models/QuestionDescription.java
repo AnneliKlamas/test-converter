@@ -9,9 +9,9 @@ import java.util.List;
 @Getter
 public class QuestionDescription {
     private String text;
-    private List<String> pictures;
+    private List<Picture> pictures;
 
-    public QuestionDescription(String text, List<String> pictures) {
+    public QuestionDescription(String text, List<Picture> pictures) {
         this.text = text;
         this.pictures = pictures;
     }

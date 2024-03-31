@@ -2,10 +2,7 @@ package com.quiz.converter.services;
 
 import com.quiz.converter.handlers.FeedbackHandler;
 import com.quiz.converter.handlers.QuestionHandler;
-import com.quiz.converter.models.Answer;
-import com.quiz.converter.models.Question;
-import com.quiz.converter.models.QuestionDescription;
-import com.quiz.converter.models.QuestionState;
+import com.quiz.converter.models.*;
 import com.quiz.converter.models.enums.ParagraphType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -60,7 +57,7 @@ public class FileUploadService {
         }
     }
 
-    private static void handleEmptyTextParagraph(List<String> paragraphPictures, QuestionState state) {
+    private static void handleEmptyTextParagraph(List<Picture> paragraphPictures, QuestionState state) {
         if (!paragraphPictures.isEmpty()) {
             if (state.getPreviousParagraphType().equals(ParagraphType.ANSWER_OPTION)) {
                 state.getAnswerOptions().get(state.getAnswerOptions().size() - 1).getPictures().addAll(paragraphPictures);
@@ -81,21 +78,23 @@ public class FileUploadService {
         return ParagraphType.ANSWER_OPTION;
     }
 
-    private List<String> handleParagraphPictures(XWPFParagraph paragraph) {
+    private List<Picture> handleParagraphPictures(XWPFParagraph paragraph) {
         var runsWithPictures = paragraph.getRuns().stream().filter(r -> !r.getEmbeddedPictures().isEmpty()).toList();
-        var paragraphPictures = new ArrayList<String>();
+        var paragraphPictures = new ArrayList<Picture>();
         if (!runsWithPictures.isEmpty()) {
             for (var run : runsWithPictures) {
                 var pictures = run.getEmbeddedPictures();
                 for (var picture : pictures) {
-                    paragraphPictures.add(Base64.getEncoder().encodeToString(picture.getPictureData().getData()));
+                    var data = Base64.getEncoder().encodeToString(picture.getPictureData().getData());
+                    var name = picture.getPictureData().getFileName().replace(picture.getPictureData().getPictureTypeEnum().extension, "");
+                    paragraphPictures.add(new Picture(data, picture.getWidth(), picture.getDepth(), name, picture.getPictureData().getPictureTypeEnum()));
                 }
             }
         }
         return paragraphPictures;
     }
 
-    private Answer createAnswerFromString(String text, List<String> paragraphPictures) {
+    private Answer createAnswerFromString(String text, List<Picture> paragraphPictures) {
         var isCorrectAnswer = text.strip().startsWith("*");
         var indexOfColon = !text.contains(":") ? Integer.MAX_VALUE : text.indexOf(":");
         var indexOfParenthesis = !text.contains(")") ? Integer.MAX_VALUE : text.indexOf(")");

@@ -14,9 +14,9 @@ public class Answer {
     private String text;
     private Optional<String> feedback;
     private boolean isCorrect;
-    private List<String> pictures;
+    private List<Picture> pictures;
 
-    public Answer(String text, Optional<String> feedback, boolean isCorrect, List<String> pictures) {
+    public Answer(String text, Optional<String> feedback, boolean isCorrect, List<Picture> pictures) {
         this.text = text;
         this.feedback = feedback;
         this.isCorrect = isCorrect;

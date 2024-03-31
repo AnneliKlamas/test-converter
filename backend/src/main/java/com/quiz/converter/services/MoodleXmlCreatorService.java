@@ -1,6 +1,7 @@
 package com.quiz.converter.services;
 
 import com.quiz.converter.models.Answer;
+import com.quiz.converter.models.Picture;
 import com.quiz.converter.models.Question;
 import com.quiz.converter.models.enums.QuestionType;
 import org.springframework.stereotype.Service;
@@ -25,11 +26,7 @@ public class MoodleXmlCreatorService {
         var rootElement = doc.createElement("quiz");
         doc.appendChild(rootElement);
 
-        var questionNr = 1;
-        for (var question : questions) {
-            addQuestion(question, doc, rootElement, questionNr);
-            questionNr++;
-        }
+        questions.forEach(question -> addQuestion(question, doc, rootElement));
 
         var transformerFactory = TransformerFactory.newInstance();
         var transformer = transformerFactory.newTransformer();
@@ -42,19 +39,17 @@ public class MoodleXmlCreatorService {
         transformer.transform(source, result);
 
         return bos.toByteArray();
-
     }
 
-    private static void addQuestion(Question question, Document doc, Element rootElement, int questionNr) {
+    private static void addQuestion(Question question, Document doc, Element rootElement) {
         var questionElem = doc.createElement("question");
 
         setQuestionType(question, rootElement, questionElem);
         setQuestionName(question, doc, questionElem);
-        addQuestionDescription(question, doc, questionNr, questionElem);
+        addQuestionDescription(question, doc, questionElem);
 
-        var answerNr = 1;
         for (var answer : question.answerOptions()) {
-            addAnswer(doc, answer, questionElem, questionNr, answerNr++);
+            addAnswer(doc, answer, questionElem);
         }
 
         if (question.type().equals(QuestionType.SINGLE_CHOICE)) {
@@ -68,7 +63,7 @@ public class MoodleXmlCreatorService {
         }
     }
 
-    private static void addQuestionDescription(Question question, Document doc, int pictureNumber, Element questionElem) {
+    private static void addQuestionDescription(Question question, Document doc, Element questionElem) {
         var questionTextElem = doc.createElement("questiontext");
 
         questionTextElem.setAttribute("format", "html");
@@ -78,7 +73,7 @@ public class MoodleXmlCreatorService {
         var descriptionContent = new StringBuilder(question.description().getText());
 
         for (var picture : question.description().getPictures()) {
-            descriptionContent.append(addPicture(doc, "D" + pictureNumber, picture, questionTextElem));
+            descriptionContent.append(addPicture(doc, picture, questionTextElem));
         }
 
         textElem.setTextContent(descriptionContent.toString());
@@ -100,7 +95,7 @@ public class MoodleXmlCreatorService {
         rootElem.appendChild(questionElem);
     }
 
-    private static void addAnswer(Document doc, Answer answer, Element questionElem, int questionNr, int answerNr) {
+    private static void addAnswer(Document doc, Answer answer, Element questionElem) {
         var answerElem = doc.createElement("answer");
 
         answerElem.setAttribute("fraction", answer.isCorrect() ? "100" : "0");
@@ -111,7 +106,7 @@ public class MoodleXmlCreatorService {
         var answerContent = new StringBuilder(answer.getText());
 
         for (var picture : answer.getPictures()) {
-            answerContent.append(addPicture(doc, "A" + questionNr + answerNr, picture, answerElem));
+            answerContent.append(addPicture(doc, picture, answerElem));
         }
 
         textElem.setTextContent(answerContent.toString());
@@ -134,17 +129,16 @@ public class MoodleXmlCreatorService {
         generalFeedbackElem.appendChild(generalFeedbackTextElem);
     }
 
-    private static String addPicture(Document doc, String pictureNumber, String picture, Element parentElem) {
-        var paragraphPictureNr = 0;
+    private static String addPicture(Document doc, Picture picture, Element parentElem) {
         var fileElem = doc.createElement("file");
-        fileElem.setAttribute("name", "moodle_" + pictureNumber + paragraphPictureNr + ".png");
+        fileElem.setAttribute("name", "moodle_" + picture.name() + picture.type().extension);
         fileElem.setAttribute("encoding", "base64");
-        fileElem.setTextContent(picture);
+        fileElem.setTextContent(picture.base64());
         parentElem.appendChild(fileElem);
         return "<br><img src=\"@@PLUGINFILE@@/moodle_" +
-                pictureNumber + paragraphPictureNr +
-                ".png\" alt=\"" +
-                pictureNumber + paragraphPictureNr +
-                "\" width=\"225\" height=\"225\" class=\"img-fluid atto_image_button_text-bottom\"><br>";
+                picture.name() + picture.type().extension +
+                "\" alt=\"" +
+                picture.name() +
+                "\" width=\"" + picture.width() + "\" height=\"" + picture.height() + "\" class=\"img-fluid atto_image_button_text-bottom\"><br>";
     }
 }
