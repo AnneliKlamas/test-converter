@@ -22,12 +22,21 @@ public class FileController {
     @Autowired
     ConverterService service;
 
-    @PostMapping
-    public ResponseEntity<byte[]> convertDocFile(@RequestBody MultipartFile file) throws IOException, ParserConfigurationException, TransformerException {
+    @PostMapping(value = "/moodleXML")
+    public ResponseEntity<byte[]> convertDocFileToMoodleXML(@RequestBody MultipartFile file) throws IOException, ParserConfigurationException, TransformerException {
         var convertedFileName = file.getOriginalFilename().replace(".docx", "") + "_moodle.xml";
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_XML)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + convertedFileName)
                 .body(service.convertDocToMoodle(file));
+    }
+
+    @PostMapping(value = "/courseraDocx")
+    public ResponseEntity<byte[]> convertDocFileToCourseraDocx(@RequestBody MultipartFile file) throws IOException {
+        var convertedFileName = file.getOriginalFilename().replace(".docx", "") + "_coursera.docx";
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf("application/vnd.ms-word"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + convertedFileName)
+                .body(service.convertDocToCoursera(file));
     }
 }

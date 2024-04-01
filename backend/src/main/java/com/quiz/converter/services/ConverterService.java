@@ -14,9 +14,16 @@ public class ConverterService {
     FileUploadService fileUploadService;
     @Autowired
     MoodleXmlCreatorService moodleXmlCreator;
+    @Autowired
+    CourseraDocxCreator courseraDocxCreator;
 
     public byte[] convertDocToMoodle(MultipartFile file) throws IOException, ParserConfigurationException, TransformerException {
         var questions = fileUploadService.convertDocToQuestion(file);
         return moodleXmlCreator.createMoodleXml(questions);
+    }
+
+    public byte[] convertDocToCoursera(MultipartFile file) throws IOException {
+        var questions = fileUploadService.convertDocToQuestion(file);
+        return courseraDocxCreator.createCourseraDocx(questions);
     }
 }
