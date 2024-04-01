@@ -2,10 +2,14 @@ package com.quiz.converter.controller;
 
 import com.quiz.converter.services.ConverterService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,12 +27,21 @@ public class FileController {
     ConverterService service;
 
     @PostMapping(value = "/moodleXML")
-    public ResponseEntity<byte[]> convertDocFileToMoodleXML(@RequestBody MultipartFile file) throws IOException, ParserConfigurationException, TransformerException {
+    public ResponseEntity<MultiValueMap<String, HttpEntity<?>>> convertDocFileToMoodleXML(@RequestBody MultipartFile file) throws IOException, ParserConfigurationException, TransformerException {
         var convertedFileName = file.getOriginalFilename().replace(".docx", "") + "_moodle.xml";
-        return ResponseEntity.ok()
+        var attachments = service.convertDocToMoodle(file);
+
+        var builder = new MultipartBodyBuilder();
+        builder.part("details", attachments.getSecond())
+                .contentType(MediaType.APPLICATION_JSON);
+        builder.part("file", attachments.getFirst())
                 .contentType(MediaType.APPLICATION_XML)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + convertedFileName)
-                .body(service.convertDocToMoodle(file));
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + convertedFileName);
+        var body = builder.build();
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(body);
     }
 
     @PostMapping(value = "/courseraDocx")

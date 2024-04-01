@@ -17,7 +17,7 @@ import java.util.Base64;
 import java.util.List;
 
 @Service
-public class CourseraDocxCreator {
+public class CourseraDocxCreatorService {
     public byte[] createCourseraDocx(List<Question> questions) throws IOException {
         var doc = new XWPFDocument();
         for (var question : questions) {

@@ -1,5 +1,7 @@
 package com.quiz.converter.services;
 
+import com.quiz.converter.models.QuestionDetails;
+import org.apache.commons.math3.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,11 +17,13 @@ public class ConverterService {
     @Autowired
     MoodleXmlCreatorService moodleXmlCreator;
     @Autowired
-    CourseraDocxCreator courseraDocxCreator;
+    CourseraDocxCreatorService courseraDocxCreator;
+    @Autowired
+    QuestionDetailsService questionDetailsService;
 
-    public byte[] convertDocToMoodle(MultipartFile file) throws IOException, ParserConfigurationException, TransformerException {
+    public Pair<byte[], QuestionDetails> convertDocToMoodle(MultipartFile file) throws IOException, ParserConfigurationException, TransformerException {
         var questions = fileUploadService.convertDocToQuestion(file);
-        return moodleXmlCreator.createMoodleXml(questions);
+        return Pair.create(moodleXmlCreator.createMoodleXml(questions), questionDetailsService.getQuestionDetails(questions));
     }
 
     public byte[] convertDocToCoursera(MultipartFile file) throws IOException {
