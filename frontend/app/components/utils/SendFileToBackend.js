@@ -4,7 +4,7 @@ export const sendFileToBackend = async (file, outputFormat) => {
 
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/file/convert/moodleXML`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/file/convert`,
       {
         method: "POST",
         body: formData,

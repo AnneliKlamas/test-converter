@@ -24,6 +24,6 @@ public class ConverterService {
 
     public byte[] convertDocToCoursera(MultipartFile file) throws IOException {
         var questions = fileUploadService.convertDocToQuestion(file);
-        return courseraDocxCreator.createDocx(questions);
+        return courseraDocxCreator.createCourseraDocx(questions);
     }
 }

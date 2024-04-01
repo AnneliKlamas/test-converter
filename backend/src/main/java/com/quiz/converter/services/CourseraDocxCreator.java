@@ -18,7 +18,7 @@ import java.util.List;
 
 @Service
 public class CourseraDocxCreator {
-    public byte[] createDocx(List<Question> questions) throws IOException {
+    public byte[] createCourseraDocx(List<Question> questions) throws IOException {
         var doc = new XWPFDocument();
         for (var question : questions) {
             if (!question.type().equals(QuestionType.SINGLE_CHOICE)) continue;
