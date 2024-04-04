@@ -2,6 +2,7 @@ package com.quiz.converter.services;
 
 import com.quiz.converter.handlers.FeedbackHandler;
 import com.quiz.converter.handlers.QuestionHandler;
+import com.quiz.converter.handlers.QuestionValidationHandler;
 import com.quiz.converter.models.*;
 import com.quiz.converter.models.enums.ParagraphType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -24,7 +25,9 @@ public class FileUploadService {
 
         docx.getParagraphs().forEach(paragraph -> handleParagraph(state, questions, paragraph));
 
-        if (!state.getAnswerOptions().isEmpty()) questions.add(state.createQuestion());
+        var validationHandler = new QuestionValidationHandler(state);
+        validationHandler.validateQuestion();
+        questions.add(state.createQuestion());
 
         return questions;
     }

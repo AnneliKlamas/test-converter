@@ -23,11 +23,13 @@ public class ConverterService {
 
     public Pair<byte[], QuestionDetails> convertDocToMoodle(MultipartFile file) throws IOException, ParserConfigurationException, TransformerException {
         var questions = fileUploadService.convertDocToQuestion(file);
-        return Pair.create(moodleXmlCreator.createMoodleXml(questions), questionDetailsService.getQuestionDetails(questions));
+        var questionsWithoutErrors = questions.stream().filter(q -> q.errors().isEmpty()).toList();
+        return Pair.create(moodleXmlCreator.createMoodleXml(questionsWithoutErrors), questionDetailsService.getQuestionDetails(questions));
     }
 
-    public byte[] convertDocToCoursera(MultipartFile file) throws IOException {
+    public Pair<byte[], QuestionDetails> convertDocToCoursera(MultipartFile file) throws IOException {
         var questions = fileUploadService.convertDocToQuestion(file);
-        return courseraDocxCreator.createCourseraDocx(questions);
+        var questionsWithoutErrors = questions.stream().filter(q -> q.errors().isEmpty()).toList();
+        return Pair.create(courseraDocxCreator.createCourseraDocx(questionsWithoutErrors), questionDetailsService.getQuestionDetails(questions));
     }
 }

@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,11 +44,20 @@ public class FileController {
     }
 
     @PostMapping(value = "/courseraDocx")
-    public ResponseEntity<byte[]> convertDocFileToCourseraDocx(@RequestBody MultipartFile file) throws IOException {
+    public ResponseEntity<MultiValueMap<String, HttpEntity<?>>> convertDocFileToCourseraDocx(@RequestBody MultipartFile file) throws IOException {
         var convertedFileName = file.getOriginalFilename().replace(".docx", "") + "_coursera.docx";
-        return ResponseEntity.ok()
+        var attachments = service.convertDocToCoursera(file);
+
+        var builder = new MultipartBodyBuilder();
+        builder.part("details", attachments.getSecond())
+                .contentType(MediaType.APPLICATION_JSON);
+        builder.part("file", attachments.getFirst())
                 .contentType(MediaType.valueOf("application/vnd.ms-word"))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + convertedFileName)
-                .body(service.convertDocToCoursera(file));
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + convertedFileName);
+        var body = builder.build();
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(body);
     }
 }
