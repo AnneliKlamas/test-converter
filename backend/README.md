@@ -20,7 +20,7 @@ Pictures are always added to the end of the text.
 
 \* marks right answers.
 
-Supports only single choice questions.
+Supports only single choice and multiple choice/checkbox questions.
 
 Doesn't support multi paragraph question descriptions. 
 
