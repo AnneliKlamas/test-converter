@@ -59,7 +59,8 @@ public class CourseraDocxCreatorService {
         } catch (NumberFormatException e) {
             questionName = questions.indexOf(question) + 1;
         }
-        questionDetailsRun.setText("Question " + questionName + " - " + questionTypeText);
+        var shuffle = question.shuffle() ? "shuffle" : "no shuffle";
+        questionDetailsRun.setText("Question " + questionName + " - " + questionTypeText + "," + shuffle);
     }
 
     private static void addAnswerOptions(Question question, int i, XWPFDocument doc) {

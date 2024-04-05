@@ -26,3 +26,5 @@ Doesn't support multi paragraph question descriptions.
 
 Coursera doesn't support default feedback for multi nor single choice questions.
 
+By default no shuffle.
+
