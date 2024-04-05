@@ -7,7 +7,7 @@ import com.quiz.converter.models.enums.QuestionWarningType;
 import java.util.List;
 import java.util.Map;
 
-public record QuestionDetails(
+public record QuizDetails(
         int questionCount,
         Map<QuestionType, Integer> questionConfigDetails,
         int answersCount,

@@ -1,17 +1,17 @@
-package com.quiz.converter.services;
+package com.quiz.converter.components;
 
 import com.quiz.converter.models.Question;
-import com.quiz.converter.models.QuestionDetails;
+import com.quiz.converter.models.QuizDetails;
 import com.quiz.converter.models.enums.QuestionErrorType;
 import com.quiz.converter.models.enums.QuestionType;
 import com.quiz.converter.models.enums.QuestionWarningType;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Service
-public class QuestionDetailsService {
-    public QuestionDetails getQuestionDetails(List<Question> questions) {
+@Component
+public class QuizDetailsComponent {
+    public QuizDetails getQuestionDetails(List<Question> questions) {
         var answerCount = 0;
         var questionPicturesCount = 0;
         var answerPicturesCount = 0;
@@ -42,7 +42,7 @@ public class QuestionDetailsService {
                 answerPicturesCount += answer.getPictures().size();
             }
         }
-        return new QuestionDetails(questionCount, questionTypeCounts, answerCount, questionPicturesCount, answerPicturesCount, errors, warnings, skippedQuestions);
+        return new QuizDetails(questionCount, questionTypeCounts, answerCount, questionPicturesCount, answerPicturesCount, errors, warnings, skippedQuestions);
     }
 
     private void addErrors(HashMap<String, List<QuestionErrorType>> errors, Question question) {
