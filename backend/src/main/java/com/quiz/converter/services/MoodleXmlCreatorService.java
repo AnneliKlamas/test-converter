@@ -53,16 +53,7 @@ public class MoodleXmlCreatorService {
         }
 
         addQuestionOptions(question, doc, questionElem);
-
-        if (question.type().equals(QuestionType.SINGLE_CHOICE)) {
-            var singleChoiceTagElem = doc.createElement("single");
-            singleChoiceTagElem.setTextContent("true");
-            questionElem.appendChild(singleChoiceTagElem);
-        } else if (question.type().equals(QuestionType.MULTIPLE_CHOICE)) {
-            var singleChoiceTagElem = doc.createElement("single");
-            singleChoiceTagElem.setTextContent("false");
-            questionElem.appendChild(singleChoiceTagElem);
-        }
+        addQuestionType(question, doc, questionElem);
 
         if (!question.feedback().isEmpty()) {
             addFeedback(doc, questionElem, question.feedback());
@@ -74,6 +65,13 @@ public class MoodleXmlCreatorService {
         var shuffleText = question.shuffle() ? "1" : "0";
         shuffleTagElem.setTextContent(shuffleText);
         questionElem.appendChild(shuffleTagElem);
+    }
+
+    private static void addQuestionType(Question question, Document doc, Element questionElem) {
+        var singleChoiceTagElem = doc.createElement("single");
+        var singleChoiceText = question.type().equals(QuestionType.SINGLE_CHOICE) ? "true" : "false";
+        singleChoiceTagElem.setTextContent(singleChoiceText);
+        questionElem.appendChild(singleChoiceTagElem);
     }
 
     private static void addQuestionDescription(Question question, Document doc, Element questionElem) {
