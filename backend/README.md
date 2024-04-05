@@ -22,7 +22,10 @@ Pictures are always added to the end of the text.
 
 Supports only single choice questions.
 
-Doesn't support multi paragraph question descriptions. 
+Supports multi paragraph question descriptions. 
 
 Coursera doesn't support default feedback for multi nor single choice questions.
 
+Answer option need to start with letter or number followed by colon ':' or closing parenthesis ')'
+
+Correct answer should be marked wit '*'. Example: "*A) answer option text". Also multiple symbols will work: "   ** * 1: answer option text".

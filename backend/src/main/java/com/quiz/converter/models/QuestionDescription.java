@@ -3,16 +3,17 @@ package com.quiz.converter.models;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
 @Getter
 public class QuestionDescription {
-    private String text;
-    private List<Picture> pictures;
+    private List<String> texts = new ArrayList<>();
+    private List<Picture> pictures = new ArrayList<>();
 
-    public QuestionDescription(String text, List<Picture> pictures) {
-        this.text = text;
+    public QuestionDescription(List<String> texts, List<Picture> pictures) {
+        this.texts = texts;
         this.pictures = pictures;
     }
 }
