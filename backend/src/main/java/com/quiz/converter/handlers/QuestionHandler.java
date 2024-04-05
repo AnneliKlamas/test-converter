@@ -39,9 +39,9 @@ public class QuestionHandler {
 
     private void addQuestionType(String text) {
         var lowerCaseText = text.toLowerCase();
-        if (lowerCaseText.contains("single choice")) { //TODO: add regex here, as there can be multiple whitespaces between "multiple" and "choice"
+        if (lowerCaseText.matches(".*(single)\s*(choice).*")) {
             state.setType(QuestionType.SINGLE_CHOICE);
-        } else if (lowerCaseText.contains("multiple choice") || lowerCaseText.contains("checkbox")) {
+        } else if (lowerCaseText.matches(".*(multiple)\s*(choice).*") || lowerCaseText.contains("checkbox")) {
             state.setType(QuestionType.MULTIPLE_CHOICE);
         } else {
             state.setType(QuestionType.UNKNOWN);
