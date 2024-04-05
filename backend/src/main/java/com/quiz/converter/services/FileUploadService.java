@@ -5,6 +5,7 @@ import com.quiz.converter.handlers.QuestionHandler;
 import com.quiz.converter.handlers.QuestionValidationHandler;
 import com.quiz.converter.models.*;
 import com.quiz.converter.models.enums.ParagraphType;
+import com.quiz.converter.models.enums.QuestionWarningType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.springframework.stereotype.Service;
@@ -85,6 +86,7 @@ public class FileUploadService {
         if (state.getPreviousParagraphType().equals(ParagraphType.QUESTION_DESCRIPTION)) {
             return ParagraphType.QUESTION_DESCRIPTION;
         }
+        state.getWarnings().add(QuestionWarningType.UNKNOWN_PARAGRAPH_TYPE);
         return ParagraphType.UNKNOWN;
     }
 
