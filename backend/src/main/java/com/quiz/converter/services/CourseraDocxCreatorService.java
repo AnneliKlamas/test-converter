@@ -91,7 +91,7 @@ public class CourseraDocxCreatorService {
             var pictureRun = pictureParagraph.createRun();
             var pictureData = Base64.getDecoder().decode(p.base64());
 
-            pictureRun.addPicture(new ByteArrayInputStream(pictureData), PictureType.PNG, "question nr + picture nr", Units.toEMU(250), Units.toEMU(250));
+            pictureRun.addPicture(new ByteArrayInputStream(pictureData), PictureType.PNG, "question nr + picture nr", Units.toEMU(p.width()), Units.toEMU(p.height()));
         } catch (InvalidFormatException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
