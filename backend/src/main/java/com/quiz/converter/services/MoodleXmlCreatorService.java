@@ -48,8 +48,10 @@ public class MoodleXmlCreatorService {
         setQuestionName(question, doc, questionElem);
         addQuestionDescription(question, doc, questionElem);
 
+        var correctAnswerCount = (int) question.answerOptions().stream().filter(Answer::isCorrect).count();
+
         for (var answer : question.answerOptions()) {
-            addAnswer(doc, answer, questionElem);
+            addAnswer(doc, answer, questionElem, correctAnswerCount);
         }
 
         addQuestionType(question, doc, questionElem);
@@ -99,10 +101,10 @@ public class MoodleXmlCreatorService {
         rootElem.appendChild(questionElem);
     }
 
-    private static void addAnswer(Document doc, Answer answer, Element questionElem) {
+    private static void addAnswer(Document doc, Answer answer, Element questionElem, int correctAnswerCount) {
         var answerElem = doc.createElement("answer");
 
-        answerElem.setAttribute("fraction", answer.isCorrect() ? "100" : "0");
+        answerElem.setAttribute("fraction", answer.isCorrect() ? String.valueOf(100.0 / correctAnswerCount) : String.valueOf(-100.0 / correctAnswerCount));
         answerElem.setAttribute("format", "html");
         questionElem.appendChild(answerElem);
 
@@ -118,7 +120,7 @@ public class MoodleXmlCreatorService {
 
         if (answer.getFeedback() != null && answer.getFeedback().isPresent()) {
             var feedbackElem = doc.createElement("feedback");
-            questionElem.appendChild(feedbackElem);
+            answerElem.appendChild(feedbackElem);
             var feedbackTextElem = doc.createElement("text");
             feedbackTextElem.setTextContent(answer.getFeedback().get());
             feedbackElem.appendChild(feedbackTextElem);
