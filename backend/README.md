@@ -27,6 +27,6 @@ Doesn't support multi paragraph question descriptions.
 
 Coursera doesn't support default feedback for multi nor single choice questions.
 
-When multiple choice question then every correct answer gives 100/nrOfCorrectAnswers and every incorrect answer gives
--100/nrOfCorrectAnswers  
+When multiple choice question then in MOODLE every correct answer gives 100/nrOfCorrectAnswers and every incorrect answer gives
+-100/nrOfCorrectAnswers. In coursera it is as "no partial credit".
 
