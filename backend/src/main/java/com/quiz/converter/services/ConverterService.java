@@ -1,6 +1,9 @@
 package com.quiz.converter.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.quiz.converter.components.QuizDetailsComponent;
+import com.quiz.converter.models.QuizDetails;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.math3.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,21 +12,22 @@ import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
 @Service
+@RequiredArgsConstructor
 public class ConverterService {
-    @Autowired
     FileUploadService fileUploadService;
-    @Autowired
     MoodleXmlCreatorService moodleXmlCreator;
-    @Autowired
-    CourseraDocxCreator courseraDocxCreator;
+    CourseraDocxCreatorService courseraDocxCreator;
+    QuizDetailsComponent quizDetailsComponent;
 
-    public byte[] convertDocToMoodle(MultipartFile file) throws IOException, ParserConfigurationException, TransformerException {
+    public Pair<byte[], QuizDetails> convertDocToMoodle(MultipartFile file) throws IOException, ParserConfigurationException, TransformerException {
         var questions = fileUploadService.convertDocToQuestion(file);
-        return moodleXmlCreator.createMoodleXml(questions);
+        var questionsWithoutErrors = questions.stream().filter(q -> q.errors().isEmpty()).toList();
+        return Pair.create(moodleXmlCreator.createMoodleXml(questionsWithoutErrors), quizDetailsComponent.getQuestionDetails(questions));
     }
 
-    public byte[] convertDocToCoursera(MultipartFile file) throws IOException {
+    public Pair<byte[], QuizDetails> convertDocToCoursera(MultipartFile file) throws IOException {
         var questions = fileUploadService.convertDocToQuestion(file);
-        return courseraDocxCreator.createCourseraDocx(questions);
+        var questionsWithoutErrors = questions.stream().filter(q -> q.errors().isEmpty()).toList();
+        return Pair.create(courseraDocxCreator.createCourseraDocx(questionsWithoutErrors), quizDetailsComponent.getQuestionDetails(questions));
     }
 }
