@@ -21,6 +21,7 @@ public class QuestionState {
     private ParagraphType previousParagraphType = ParagraphType.EMPTY_TEXT;
     private List<QuestionErrorType> errors = new ArrayList<>();
     private List<QuestionWarningType> warnings = new ArrayList<>();
+    private boolean shuffle = false;
 
     public void cleanState() {
         name = "";
@@ -31,9 +32,10 @@ public class QuestionState {
         previousParagraphType = ParagraphType.EMPTY_TEXT;
         errors = new ArrayList<>();
         warnings = new ArrayList<>();
+        shuffle = false;
     }
 
     public Question createQuestion() {
-        return new Question(name, defaultFeedback, type, description, answerOptions, errors, warnings);
+        return new Question(name, defaultFeedback, type, description, answerOptions, errors, warnings, shuffle);
     }
 }

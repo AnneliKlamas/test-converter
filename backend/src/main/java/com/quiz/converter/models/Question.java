@@ -13,5 +13,6 @@ public record Question(
         QuestionDescription description,
         List<Answer> answerOptions,
         List<QuestionErrorType> errors,
-        List<QuestionWarningType> warnings) {
+        List<QuestionWarningType> warnings,
+        boolean shuffle) {
 }

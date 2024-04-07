@@ -54,11 +54,19 @@ public class MoodleXmlCreatorService {
             addAnswer(doc, answer, questionElem, correctAnswerCount);
         }
 
+        addQuestionOptions(question, doc, questionElem);
         addQuestionType(question, doc, questionElem);
 
         if (!question.feedback().isEmpty()) {
             addFeedback(doc, questionElem, question.feedback());
         }
+    }
+
+    private static void addQuestionOptions(Question question, Document doc, Element questionElem) {
+        var shuffleTagElem = doc.createElement("shuffleanswers");
+        var shuffleText = question.shuffle() ? "1" : "0";
+        shuffleTagElem.setTextContent(shuffleText);
+        questionElem.appendChild(shuffleTagElem);
     }
 
     private static void addQuestionType(Question question, Document doc, Element questionElem) {
