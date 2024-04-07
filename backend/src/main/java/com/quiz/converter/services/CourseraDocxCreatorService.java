@@ -4,7 +4,6 @@ import com.quiz.converter.models.Answer;
 import com.quiz.converter.models.Picture;
 import com.quiz.converter.models.Question;
 import com.quiz.converter.models.enums.QuestionType;
-import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -21,8 +20,6 @@ public class CourseraDocxCreatorService {
     public byte[] createCourseraDocx(List<Question> questions) throws IOException {
         var doc = new XWPFDocument();
         for (var question : questions) {
-            if (!question.type().equals(QuestionType.SINGLE_CHOICE)) continue;
-
             addQuestionDetails(questions, question, doc);
             addQuestionDescription(question, doc);
 
@@ -54,6 +51,8 @@ public class CourseraDocxCreatorService {
         var questionTypeText = "";
         if (question.type().equals(QuestionType.SINGLE_CHOICE)) {
             questionTypeText = "single correct answer";
+        } else if (question.type().equals(QuestionType.MULTIPLE_CHOICE)) {
+            questionTypeText = "checkbox";
         }
         int questionName;
         try {
@@ -61,7 +60,8 @@ public class CourseraDocxCreatorService {
         } catch (NumberFormatException e) {
             questionName = questions.indexOf(question) + 1;
         }
-        questionDetailsRun.setText("Question " + questionName + " - " + questionTypeText);
+        var shuffle = question.shuffle() ? "shuffle" : "no shuffle";
+        questionDetailsRun.setText("Question " + questionName + " - " + questionTypeText + "," + shuffle);
     }
 
     private static void addAnswerOptions(Question question, int i, XWPFDocument doc) {
@@ -87,15 +87,12 @@ public class CourseraDocxCreatorService {
     }
 
     private static void addPictures(Picture p, XWPFDocument doc) {
+        var pictureParagraph = doc.createParagraph();
+        var pictureRun = pictureParagraph.createRun();
+        var pictureData = Base64.getDecoder().decode(p.base64());
         try {
-            var pictureParagraph = doc.createParagraph();
-            var pictureRun = pictureParagraph.createRun();
-            var pictureData = Base64.getDecoder().decode(p.base64());
-
-            pictureRun.addPicture(new ByteArrayInputStream(pictureData), PictureType.PNG, "question nr + picture nr", Units.toEMU(250), Units.toEMU(250));
-        } catch (InvalidFormatException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+            pictureRun.addPicture(new ByteArrayInputStream(pictureData), p.type(), p.name(), Units.toEMU(p.width()), Units.toEMU(p.height()));
+        } catch (InvalidFormatException | IOException e) {
             throw new RuntimeException(e);
         }
     }

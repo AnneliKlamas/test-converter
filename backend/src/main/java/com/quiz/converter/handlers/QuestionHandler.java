@@ -24,7 +24,17 @@ public class QuestionHandler {
         }
         addQuestionType(text);
         addQuestionName(text);
+        addQuestionOptions(text);
         return question;
+    }
+
+    private void addQuestionOptions(String text) {
+        var lowerCaseText = text.toLowerCase();
+        if (lowerCaseText.matches(".*(no)\s*(shuffle).*")) {
+            state.setShuffle(false);
+        } else if (lowerCaseText.matches(".*(shuffle).*")) {
+            state.setShuffle(true);
+        }
     }
 
     private void addQuestionName(String text) {
@@ -38,8 +48,11 @@ public class QuestionHandler {
     }
 
     private void addQuestionType(String text) {
-        if (text.toLowerCase().contains("single choice")) {
+        var lowerCaseText = text.toLowerCase();
+        if (lowerCaseText.matches(".*(single)\s*(choice).*")) {
             state.setType(QuestionType.SINGLE_CHOICE);
+        } else if (lowerCaseText.matches(".*(multiple)\s*(choice).*") || lowerCaseText.contains("checkbox")) {
+            state.setType(QuestionType.MULTIPLE_CHOICE);
         } else {
             state.setType(QuestionType.UNKNOWN);
         }
