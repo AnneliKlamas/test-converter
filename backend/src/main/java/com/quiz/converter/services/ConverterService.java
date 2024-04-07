@@ -2,8 +2,10 @@ package com.quiz.converter.services;
 
 import com.quiz.converter.components.QuizDetailsComponent;
 import com.quiz.converter.models.QuizDetails;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.math3.util.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,11 +14,14 @@ import javax.xml.transform.TransformerException;
 import java.io.IOException;
 
 @Service
-@RequiredArgsConstructor
 public class ConverterService {
+    @Autowired
     FileUploadService fileUploadService;
+    @Autowired
     MoodleXmlCreatorService moodleXmlCreator;
+    @Autowired
     CourseraDocxCreatorService courseraDocxCreator;
+    @Autowired
     QuizDetailsComponent quizDetailsComponent;
 
     public Pair<byte[], QuizDetails> convertDocToMoodle(MultipartFile file) throws IOException, ParserConfigurationException, TransformerException {
