@@ -25,9 +25,9 @@ public class ConverterService {
         return Pair.create(moodleXmlCreator.createMoodleXml(questionsWithoutErrors), quizDetailsComponent.getQuestionDetails(questions));
     }
 
-    public Pair<byte[], QuestionDetails> convertDocToCoursera(MultipartFile file) throws IOException {
+    public Pair<byte[], QuizDetails> convertDocToCoursera(MultipartFile file) throws IOException {
         var questions = fileUploadService.convertDocToQuestion(file);
         var questionsWithoutErrors = questions.stream().filter(q -> q.errors().isEmpty()).toList();
-        return Pair.create(courseraDocxCreator.createCourseraDocx(questionsWithoutErrors), questionDetailsComponent.getQuestionDetails(questions));
+        return Pair.create(courseraDocxCreator.createCourseraDocx(questionsWithoutErrors), quizDetailsComponent.getQuestionDetails(questions));
     }
 }
