@@ -20,8 +20,6 @@ public class CourseraDocxCreatorService {
     public byte[] createCourseraDocx(List<Question> questions) throws IOException {
         var doc = new XWPFDocument();
         for (var question : questions) {
-            if (!question.type().equals(QuestionType.SINGLE_CHOICE)) continue;
-
             addQuestionDetails(questions, question, doc);
             addQuestionDescription(question, doc);
 
@@ -51,6 +49,8 @@ public class CourseraDocxCreatorService {
         var questionTypeText = "";
         if (question.type().equals(QuestionType.SINGLE_CHOICE)) {
             questionTypeText = "single correct answer";
+        } else if (question.type().equals(QuestionType.MULTIPLE_CHOICE)) {
+            questionTypeText = "checkbox";
         }
         int questionName;
         try {

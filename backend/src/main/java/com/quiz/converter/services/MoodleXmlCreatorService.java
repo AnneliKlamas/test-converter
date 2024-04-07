@@ -48,19 +48,24 @@ public class MoodleXmlCreatorService {
         setQuestionName(question, doc, questionElem);
         addQuestionDescription(question, doc, questionElem);
 
+        var correctAnswerCount = (int) question.answerOptions().stream().filter(Answer::isCorrect).count();
+
         for (var answer : question.answerOptions()) {
-            addAnswer(doc, answer, questionElem);
+            addAnswer(doc, answer, questionElem, correctAnswerCount);
         }
 
-        if (question.type().equals(QuestionType.SINGLE_CHOICE)) {
-            var singleChoiceTagElem = doc.createElement("single");
-            singleChoiceTagElem.setTextContent("true");
-            questionElem.appendChild(singleChoiceTagElem);
-        }
+        addQuestionType(question, doc, questionElem);
 
         if (!question.feedback().isEmpty()) {
             addFeedback(doc, questionElem, question.feedback());
         }
+    }
+
+    private static void addQuestionType(Question question, Document doc, Element questionElem) {
+        var singleChoiceTagElem = doc.createElement("single");
+        var singleChoiceText = question.type().equals(QuestionType.SINGLE_CHOICE) ? "true" : "false";
+        singleChoiceTagElem.setTextContent(singleChoiceText);
+        questionElem.appendChild(singleChoiceTagElem);
     }
 
     private static void addQuestionDescription(Question question, Document doc, Element questionElem) {
@@ -90,15 +95,16 @@ public class MoodleXmlCreatorService {
 
     private static void setQuestionType(Question question, Element rootElem, Element questionElem) {
         var type = "";
-        if (question.type().equals(QuestionType.SINGLE_CHOICE)) type = "multichoice";
+        if (question.type().equals(QuestionType.SINGLE_CHOICE) || (question.type().equals(QuestionType.MULTIPLE_CHOICE)))
+            type = "multichoice";
         questionElem.setAttribute("type", type);
         rootElem.appendChild(questionElem);
     }
 
-    private static void addAnswer(Document doc, Answer answer, Element questionElem) {
+    private static void addAnswer(Document doc, Answer answer, Element questionElem, int correctAnswerCount) {
         var answerElem = doc.createElement("answer");
 
-        answerElem.setAttribute("fraction", answer.isCorrect() ? "100" : "0");
+        answerElem.setAttribute("fraction", answer.isCorrect() ? String.valueOf(100.0 / correctAnswerCount) : String.valueOf(-100.0 / correctAnswerCount));
         answerElem.setAttribute("format", "html");
         questionElem.appendChild(answerElem);
 
@@ -114,7 +120,7 @@ public class MoodleXmlCreatorService {
 
         if (answer.getFeedback() != null && answer.getFeedback().isPresent()) {
             var feedbackElem = doc.createElement("feedback");
-            questionElem.appendChild(feedbackElem);
+            answerElem.appendChild(feedbackElem);
             var feedbackTextElem = doc.createElement("text");
             feedbackTextElem.setTextContent(answer.getFeedback().get());
             feedbackElem.appendChild(feedbackTextElem);
