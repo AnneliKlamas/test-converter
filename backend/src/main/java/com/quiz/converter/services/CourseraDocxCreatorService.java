@@ -4,7 +4,6 @@ import com.quiz.converter.models.Answer;
 import com.quiz.converter.models.Picture;
 import com.quiz.converter.models.Question;
 import com.quiz.converter.models.enums.QuestionType;
-import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -86,15 +85,12 @@ public class CourseraDocxCreatorService {
     }
 
     private static void addPictures(Picture p, XWPFDocument doc) {
+        var pictureParagraph = doc.createParagraph();
+        var pictureRun = pictureParagraph.createRun();
+        var pictureData = Base64.getDecoder().decode(p.base64());
         try {
-            var pictureParagraph = doc.createParagraph();
-            var pictureRun = pictureParagraph.createRun();
-            var pictureData = Base64.getDecoder().decode(p.base64());
-
-            pictureRun.addPicture(new ByteArrayInputStream(pictureData), PictureType.PNG, "question nr + picture nr", Units.toEMU(p.width()), Units.toEMU(p.height()));
-        } catch (InvalidFormatException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+            pictureRun.addPicture(new ByteArrayInputStream(pictureData), p.type(), p.name(), Units.toEMU(p.width()), Units.toEMU(p.height()));
+        } catch (InvalidFormatException | IOException e) {
             throw new RuntimeException(e);
         }
     }
