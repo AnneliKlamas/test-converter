@@ -5,6 +5,7 @@ import com.quiz.converter.handlers.QuestionHandler;
 import com.quiz.converter.handlers.QuestionValidationHandler;
 import com.quiz.converter.models.*;
 import com.quiz.converter.models.enums.ParagraphType;
+import com.quiz.converter.models.enums.QuestionWarningType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,10 @@ public class FileUploadService {
                 state.setPreviousParagraphType(paragraphType);
             }
             case QUESTION_DESCRIPTION -> {
-                state.setDescription(new QuestionDescription(text, paragraphPictures));
+                var descriptionTexts = state.getDescription().getTexts();
+                descriptionTexts.add(text);
+                var descriptionPictures = state.getDescription().getPictures();
+                descriptionPictures.addAll(paragraphPictures);
                 state.setPreviousParagraphType(paragraphType);
             }
             case FEEDBACK, DEFAULT_FEEDBACK -> {
@@ -73,12 +77,17 @@ public class FileUploadService {
     private ParagraphType getParagraphType(String text, QuestionState state) {
         if (text.replaceAll("\t", "").isEmpty() || text.replaceAll("\n", "").isEmpty()) return ParagraphType.EMPTY_TEXT;
         var lowerCaseText = text.toLowerCase().strip();
-        if (lowerCaseText.startsWith("question")) return ParagraphType.QUESTION_DETAILS;
+        if (lowerCaseText.matches("\s*(question).*")) return ParagraphType.QUESTION_DETAILS;
+        if (lowerCaseText.matches("\s*(feedback).*")) return ParagraphType.FEEDBACK;
+        if (lowerCaseText.matches(".*(default)\s*(feedback).*")) return ParagraphType.DEFAULT_FEEDBACK;
+        if (lowerCaseText.matches("(\\s*\\**\\s*)*[a-zA-Z\\d]\\s*[:)].*")) return ParagraphType.ANSWER_OPTION;
         if (state.getPreviousParagraphType().equals(ParagraphType.QUESTION_DETAILS))
             return ParagraphType.QUESTION_DESCRIPTION;
-        if (lowerCaseText.startsWith("feedback")) return ParagraphType.FEEDBACK;
-        if (lowerCaseText.startsWith("default feedback")) return ParagraphType.DEFAULT_FEEDBACK;
-        return ParagraphType.ANSWER_OPTION;
+        if (state.getPreviousParagraphType().equals(ParagraphType.QUESTION_DESCRIPTION)) {
+            return ParagraphType.QUESTION_DESCRIPTION;
+        }
+        state.getWarnings().add(QuestionWarningType.UNKNOWN_PARAGRAPH_TYPE);
+        return ParagraphType.UNKNOWN;
     }
 
     private List<Picture> handleParagraphPictures(XWPFParagraph paragraph) {
@@ -98,14 +107,8 @@ public class FileUploadService {
     }
 
     private Answer createAnswerFromString(String text, List<Picture> paragraphPictures) {
-        var isCorrectAnswer = text.strip().startsWith("*");
-        var indexOfColon = !text.contains(":") ? Integer.MAX_VALUE : text.indexOf(":");
-        var indexOfParenthesis = !text.contains(")") ? Integer.MAX_VALUE : text.indexOf(")");
-
-        if (text.contains(")") || text.contains(":")) {
-            text = text.substring(Math.min(indexOfColon, indexOfParenthesis) + 1);
-        }
-
-        return new Answer(text, null, isCorrectAnswer, paragraphPictures);
+        var isCorrectAnswer = text.strip().matches("(\\s*\\*+\s*).*");
+        var answerText = text.strip().replaceAll("(\\s*\\**\\s*)*[a-zA-Z\\d]\\s*[:)]", "");
+        return new Answer(answerText, null, isCorrectAnswer, paragraphPictures);
     }
 }

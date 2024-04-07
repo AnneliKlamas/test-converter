@@ -83,7 +83,10 @@ public class MoodleXmlCreatorService {
         questionElem.appendChild(questionTextElem);
 
         var textElem = doc.createElement("text");
-        var descriptionContent = new StringBuilder(question.description().getText());
+        var descriptionContent = new StringBuilder();
+        for (var description : question.description().getTexts()) {
+            descriptionContent.append("<br>").append(description);
+        }
 
         for (var picture : question.description().getPictures()) {
             descriptionContent.append(addPicture(doc, picture, questionTextElem));

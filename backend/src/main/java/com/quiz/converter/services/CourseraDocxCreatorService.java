@@ -36,9 +36,11 @@ public class CourseraDocxCreatorService {
     }
 
     private static void addQuestionDescription(Question question, XWPFDocument doc) {
-        var questionDescription = doc.createParagraph();
-        var questionDescriptionRun = questionDescription.createRun();
-        questionDescriptionRun.setText(question.description().getText());
+        for (var description : question.description().getTexts()) {
+            var questionDescription = doc.createParagraph();
+            var questionDescriptionRun = questionDescription.createRun();
+            questionDescriptionRun.setText(description);
+        }
 
         question.description().getPictures().forEach(p -> addPictures(p, doc));
     }

@@ -6,5 +6,6 @@ public enum ParagraphType {
     ANSWER_OPTION,
     QUESTION_DETAILS,
     EMPTY_TEXT,
-    DEFAULT_FEEDBACK
+    DEFAULT_FEEDBACK,
+    UNKNOWN
 }

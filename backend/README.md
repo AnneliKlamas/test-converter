@@ -23,7 +23,7 @@ Pictures are always added to the end of the text.
 
 Supports only single choice and multiple choice/checkbox questions.
 
-Doesn't support multi paragraph question descriptions. 
+Supports multi paragraph question descriptions. 
 
 Coursera doesn't support default feedback for multi nor single choice questions.
 
@@ -32,3 +32,6 @@ By default no shuffle.
 When multiple choice question then in MOODLE every correct answer gives 100/nrOfCorrectAnswers and every incorrect answer gives
 -100/nrOfCorrectAnswers. In COURSERA it is behaving as "no partial credit".
 
+Answer option need to start with letter or number followed by colon ':' or closing parenthesis ')'
+
+Correct answer should be marked wit '*'. Example: "*A) answer option text". Also multiple symbols will work: "   ** * 1: answer option text".
