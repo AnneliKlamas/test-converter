@@ -17,7 +17,7 @@ export default function Landingpage() {
   const handleSubmit = async (outputFormat) => {
     if (!file) {
       toast.error(data.landing.noFile, {
-        position: "top-right",
+        position: "bottom-right",
         autoClose: 2000,
         hideProgressBar: true,
       });
@@ -27,19 +27,19 @@ export default function Landingpage() {
     toast.promise(sendFileToBackend(file, outputFormat), {
       pending: {
         render: data.landing.uploading,
-        position: "top-right",
+        position: "bottom-right",
         autoClose: false,
         hideProgressBar: false,
       },
       success: {
         render: data.landing.uploaded,
-        position: "top-right",
+        position: "bottom-right",
         autoClose: 2000,
         hideProgressBar: true,
       },
       error: {
         render: data.landing.uploadError,
-        position: "top-right",
+        position: "bottom-right",
         autoClose: 2000,
         hideProgressBar: true,
       },
