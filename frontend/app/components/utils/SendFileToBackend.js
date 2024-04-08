@@ -4,42 +4,38 @@ export const sendFileToBackend = async (file, outputFormat) => {
 
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/file/convert`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/file/convert/${outputFormat}`,
       {
         method: "POST",
         body: formData,
+        headers: {
+          Accept: "application/json",
+        },
       },
     );
 
     if (!response.ok) {
-      throw new Error(`HTTP error ${response.status}`);
+      throw new Error(`Server responded with a status of ${response.status}`);
     }
 
-    const fileName = file[0].name.split(".")[0];
-    const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
+    const data = await response.json();
+
+    const mimeType =
+      outputFormat === "moodleXML"
+        ? "application/xml"
+        : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
+    const fileData = data.file;
+    const fileName = data.fileName;
+
     const link = document.createElement("a");
-    link.href = url;
-
-    const fileExtension =
-      outputFormat === "moodle"
-        ? "xml"
-        : outputFormat === "coursera"
-        ? "docx"
-        : "";
-
-    if (fileExtension) {
-      link.download = `${fileName}.${fileExtension}`;
-    } else {
-      throw new Error("Invalid output format");
-    }
-
+    link.href = `data:${mimeType};base64,${fileData}`;
+    link.download = fileName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(url);
 
-    return { success: true };
+    return { details: data.details };
   } catch (error) {
     throw error;
   }
