@@ -61,7 +61,8 @@ public class CourseraDocxCreatorService {
             questionName = questions.indexOf(question) + 1;
         }
         var shuffle = question.shuffle() ? "shuffle" : "no shuffle";
-        questionDetailsRun.setText("Question " + questionName + " - " + questionTypeText + "," + shuffle);
+        var partialCredit = question.partialCredit() ? "partial credit" : "no partial credit";
+        questionDetailsRun.setText("Question " + questionName + " - " + questionTypeText + ", " + shuffle + ", " + partialCredit);
     }
 
     private static void addAnswerOptions(Question question, int i, XWPFDocument doc) {

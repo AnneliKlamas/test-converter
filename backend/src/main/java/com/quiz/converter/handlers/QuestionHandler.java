@@ -35,6 +35,11 @@ public class QuestionHandler {
         } else if (lowerCaseText.matches(".*(shuffle).*")) {
             state.setShuffle(true);
         }
+        if (lowerCaseText.matches(".*(no)\s*(partial)\s*(credit).*")) {
+            state.setPartialCredit(false);
+        } else if (lowerCaseText.matches(".*(partial)\s*(credit).*")) {
+            state.setPartialCredit(true);
+        }
     }
 
     private void addQuestionName(String text) {
