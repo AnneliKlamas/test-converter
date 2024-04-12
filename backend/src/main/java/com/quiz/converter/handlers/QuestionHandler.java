@@ -53,6 +53,8 @@ public class QuestionHandler {
             state.setType(QuestionType.SINGLE_CHOICE);
         } else if (lowerCaseText.matches(".*(multiple)\s*(choice).*") || lowerCaseText.contains("checkbox")) {
             state.setType(QuestionType.MULTIPLE_CHOICE);
+        } else if (lowerCaseText.matches(".*(text)\s*(match).*") || lowerCaseText.matches(".*(short)\s*(answer).*")) {
+            state.setType(QuestionType.TEXT_MATCH);
         } else {
             state.setType(QuestionType.UNKNOWN);
         }
