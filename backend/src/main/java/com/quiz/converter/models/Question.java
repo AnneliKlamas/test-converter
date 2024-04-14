@@ -14,5 +14,6 @@ public record Question(
         List<Answer> answerOptions,
         List<QuestionErrorType> errors,
         List<QuestionWarningType> warnings,
-        boolean shuffle) {
+        boolean shuffle,
+        boolean partialCredit) {
 }
