@@ -15,5 +15,12 @@
   },
   "navbar": {
     "documentation": "Documentation"
-  }
+  },
+  "documentation": {
+    "title": "Welcome to Documentation Page",
+    "howTo": "How to make a perfect template?",
+    "doc": "Documentation",
+    "template": "Template Documentation",
+    "templateName": "UniTartuCS Template"
+    }
 }
