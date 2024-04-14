@@ -11,9 +11,16 @@
     "uploadError": "There was an error uploading your file. Please try again.",
     "download": "Download as",
     "moodle": "Moodle XML",
-    "Coursera": "Coursera .docx"
+    "Coursera": "Coursera .docx",
+    "details": "Open details"
   },
   "navbar": {
     "documentation": "Documentation"
+  },
+  "modal": {
+    "title": "Document Details",
+    "documentation": "Read more about documentation:",
+    "none": "None",
+    "click": "Click here!"
   }
 }

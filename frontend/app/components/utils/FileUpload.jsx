@@ -3,7 +3,6 @@ import { useDropzone } from "react-dropzone";
 import data from "../data/info.json";
 
 const FileUploadMessage = ({ isFileAccepted, details }) => {
-
   if (isFileAccepted === null) {
     return <p>{data.fileupload.defaultMessage}</p>;
   }
