@@ -51,14 +51,16 @@ public class MoodleXmlCreatorService {
         var correctAnswerCount = (int) question.answerOptions().stream().filter(Answer::isCorrect).count();
 
         for (var answer : question.answerOptions()) {
-            addAnswer(doc, answer, questionElem, correctAnswerCount);
+            addAnswer(doc, answer, questionElem, correctAnswerCount, question.type());
         }
 
         addQuestionOptions(question, doc, questionElem);
-        addQuestionType(question, doc, questionElem);
+        if (question.type().equals(QuestionType.MULTIPLE_CHOICE) || question.type().equals(QuestionType.SINGLE_CHOICE)) {
+            addQuestionType(question, doc, questionElem);
+        }
 
-        if (!question.feedback().isEmpty()) {
-            addFeedback(doc, questionElem, question.feedback());
+        if (!question.defaultFeedback().isEmpty()) {
+            addFeedback(doc, questionElem, question.defaultFeedback());
         }
     }
 
@@ -108,14 +110,22 @@ public class MoodleXmlCreatorService {
         var type = "";
         if (question.type().equals(QuestionType.SINGLE_CHOICE) || (question.type().equals(QuestionType.MULTIPLE_CHOICE)))
             type = "multichoice";
+        else if (question.type().equals(QuestionType.TEXT_MATCH)) {
+            type = "shortanswer";
+        }
         questionElem.setAttribute("type", type);
         rootElem.appendChild(questionElem);
     }
 
-    private static void addAnswer(Document doc, Answer answer, Element questionElem, int correctAnswerCount) {
+    private static void addAnswer(Document doc, Answer answer, Element questionElem, int correctAnswerCount, QuestionType questionType) {
         var answerElem = doc.createElement("answer");
-
-        answerElem.setAttribute("fraction", answer.isCorrect() ? String.valueOf(100.0 / correctAnswerCount) : String.valueOf(-100.0 / correctAnswerCount));
+        var fraction = 0.0;
+        if (questionType.equals(QuestionType.MULTIPLE_CHOICE)) {
+            fraction = answer.isCorrect() ? 100.0 / correctAnswerCount : -100.0 / correctAnswerCount;
+        } else {
+            fraction = answer.isCorrect() ? 100 : 0;
+        }
+        answerElem.setAttribute("fraction", String.valueOf(fraction));
         answerElem.setAttribute("format", "html");
         questionElem.appendChild(answerElem);
 

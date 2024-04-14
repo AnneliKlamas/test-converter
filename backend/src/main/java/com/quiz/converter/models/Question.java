@@ -8,7 +8,7 @@ import java.util.List;
 
 public record Question(
         String name,
-        String feedback,
+        String defaultFeedback,
         QuestionType type,
         QuestionDescription description,
         List<Answer> answerOptions,

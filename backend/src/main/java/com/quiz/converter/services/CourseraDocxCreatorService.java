@@ -26,6 +26,8 @@ public class CourseraDocxCreatorService {
             for (int i = 0; i < question.answerOptions().size(); i++) {
                 addAnswerOptions(question, i, doc);
             }
+
+            addDefaultFeedback(question, doc);
         }
 
         var bos = new ByteArrayOutputStream();
@@ -33,6 +35,14 @@ public class CourseraDocxCreatorService {
         doc.close();
 
         return bos.toByteArray();
+    }
+
+    private void addDefaultFeedback(Question question, XWPFDocument doc) {
+        if (!question.defaultFeedback().isEmpty()) {
+            var defaultFeedback = doc.createParagraph();
+            var defaultFeedbackRun = defaultFeedback.createRun();
+            defaultFeedbackRun.setText("Default Feedback: " + question.defaultFeedback());
+        }
     }
 
     private static void addQuestionDescription(Question question, XWPFDocument doc) {
@@ -53,6 +63,8 @@ public class CourseraDocxCreatorService {
             questionTypeText = "single correct answer";
         } else if (question.type().equals(QuestionType.MULTIPLE_CHOICE)) {
             questionTypeText = "checkbox";
+        } else if (question.type().equals(QuestionType.TEXT_MATCH)) {
+            questionTypeText = "text match";
         }
         int questionName;
         try {
