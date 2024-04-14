@@ -107,14 +107,18 @@ public class MoodleXmlCreatorService {
     }
 
     private static void setQuestionType(Question question, Element rootElem, Element questionElem) {
-        var type = "";
-        if (question.type().equals(QuestionType.SINGLE_CHOICE) || (question.type().equals(QuestionType.MULTIPLE_CHOICE)))
-            type = "multichoice";
-        else if (question.type().equals(QuestionType.TEXT_MATCH)) {
-            type = "shortanswer";
-        }
+        var type = getQuestionType(question.type());
         questionElem.setAttribute("type", type);
         rootElem.appendChild(questionElem);
+    }
+
+    private static String getQuestionType(QuestionType type) {
+        return switch (type) {
+            case SINGLE_CHOICE, MULTIPLE_CHOICE -> "multichoice";
+            case TEXT_MATCH -> "shortanswer";
+            case REGULAR_EXPRESSION -> "regexp";
+            default -> "";
+        };
     }
 
     private static void addAnswer(Document doc, Answer answer, Element questionElem, int correctAnswerCount, QuestionType questionType) {
