@@ -21,6 +21,14 @@
     "title": "Document Details",
     "documentation": "Read more about documentation:",
     "none": "None",
-    "click": "Click here!"
+    "click": "Click here!",
+    "questionCount": "Question Count:",
+    "answerPicCount": "Answer Picture Count:",
+    "answersCount": "Answers Count:",
+    "questionPicCount": "Question Picture Count:",
+    "questionTypes": "Question Types:",
+    "skippedQuestions": "Skipped Questions:",
+    "questionErrors": "Question Errors:",
+    "questionWarnings": "Question Warnings:"
   }
 }

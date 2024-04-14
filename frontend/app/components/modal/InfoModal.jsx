@@ -91,34 +91,36 @@ const InfoModal = ({ show, onClose, details }) => {
       </div>
       <div className="pb-4 text-sm">
         {data.modal.documentation}
-        <Link href="/documentation" className="pl-1 text-blue">{data.modal.click}</Link>
-        </div>
+        <Link href="/documentation" className="pl-1 text-blue">
+          {data.modal.click}
+        </Link>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
-          <Section title="Question Count:">
+          <Section title={data.modal.questionCount}>
             <span className="pl-1">{details?.questionCount || "0"}</span>
           </Section>
-          <Section title="Answer Picture Count:">
-            <span className="pl-1">{details?.answerPictureCount || "0"}</span>
-          </Section>
-          <Section title="Answers Count:">
+          <Section title={data.modal.answersCount}>
             <span className="pl-1">{details?.answersCount || "0"}</span>
           </Section>
-          <Section title="Question Pictures Count:">
+          <Section title={data.modal.questionPicCount}>
             <span className="pl-1">
               {details?.questionPicturesCount || "0"}
             </span>
           </Section>
-          <Section title="Question Types:">
-            {questionTypes || <span className="pl-1">{data.modal.none}</span>}
+          <Section title={data.modal.answerPicCount}>
+            <span className="pl-1">{details?.answerPictureCount || "0"}</span>
           </Section>
-          <Section title="Skipped Questions:">
+          <Section title={data.modal.skippedQuestions}>
             <span className="pl-1">{details?.skippedQuestions || "0"}</span>
           </Section>
-          <Section title="Question Errors:">
+          <Section title={data.modal.questionTypes}>
+            {questionTypes || <span className="pl-1">{data.modal.none}</span>}
+          </Section>
+          <Section title={data.modal.questionErrors}>
             {questionErrors || <span className="pl-1">{data.modal.none}</span>}
           </Section>
-          <Section title="Question Warnings:">
+          <Section title={data.modal.questionWarnings}>
             {questionWarnings || (
               <span className="pl-1">{data.modal.none}</span>
             )}
