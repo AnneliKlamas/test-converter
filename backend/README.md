@@ -34,9 +34,9 @@ When multiple choice question then in MOODLE every correct answer gives 100/nrOf
 
 Moodle doesn't support "no partial credit", so it is always partial credit
 
-By default, Coursera DOCX is will have partial credit option.
+By default, Coursera DOCX will have partial credit option.
 
 Answer option need to start with letter or number followed by colon ':' or closing parenthesis ')'
 
-Correct answer should be marked wit '*'. Example: "*A) answer option text". Also, multiple symbols will work: "   ** * 1: answer option text".
+Correct answer should be marked with '*'. Example: "*A) answer option text". Also, multiple symbols will work: "   ** * 1: answer option text".
 
