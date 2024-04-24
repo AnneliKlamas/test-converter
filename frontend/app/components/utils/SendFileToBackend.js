@@ -27,13 +27,14 @@ export const sendFileToBackend = async (file, outputFormat) => {
 
     const fileData = data.file;
     const fileName = data.fileName;
-
-    const link = document.createElement("a");
-    link.href = `data:${mimeType};base64,${fileData}`;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    if (data.details.questionCount > 0) {
+      const link = document.createElement("a");
+      link.href = `data:${mimeType};base64,${fileData}`;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
 
     return { details: data.details };
   } catch (error) {
