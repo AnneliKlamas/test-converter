@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import UploadButton from "@/app/components/utils/UploadButton";
+import Button from "@/app/components/utils/Button";
 import FileUpload from "@/app/components/utils/FileUpload";
 import { sendFileToBackend } from "../utils/SendFileToBackend";
 import { toast } from "react-toastify";
@@ -54,11 +54,11 @@ export default function Landingpage() {
           <p>{data.landing.download}</p>
         </div>
         <div className="flex sm:flex-row flex-col sm:gap-32">
-          <UploadButton
+          <Button
             name={data.landing.moodle}
             handleSubmit={() => handleSubmit("moodle")}
           />
-          <UploadButton
+          <Button
             name={data.landing.Coursera}
             handleSubmit={() => handleSubmit("coursera")}
           />

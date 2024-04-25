@@ -2,6 +2,7 @@ import Image from "next/image";
 import tu from "@/app/components/assets/tu.png";
 import data from "../../data/en.json";
 import Link from "next/link";
+import Button from "../utils/Button";
 
 export default function Navbar() {
   return (
@@ -19,11 +20,11 @@ export default function Navbar() {
           href="/"
         />
       </Link>
-      <button className="self-center p-1 sm:px-5 border-2 sm:mr-10 rounded-md text-white">
-        <Link href="/documentation" passHref>
-          {data.navbar.documentation}
-        </Link>
-      </button>
+      <Button
+        name={data?.documentation?.doc}
+        href="/documentation"
+        className="self-center border-2 border-white sm:mr-10 rounded-md text-white"
+      />
     </nav>
   );
 }
