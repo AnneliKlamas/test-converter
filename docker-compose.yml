@@ -1,0 +1,21 @@
+version: '1'
+services:
+  frontend:
+    container_name: quiz-converter-frontend
+    image: quiz-converter-frontend
+    depends_on:
+      - backend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+
+  backend:
+    container_name: quiz-converter-api
+    image: quiz-converter-api
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
