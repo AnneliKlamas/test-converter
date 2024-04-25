@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import data from "../data/info.json";
+import data from "../../data/en.json";
 
 const FileUploadMessage = ({ isFileAccepted }) => {
   if (isFileAccepted === null) {

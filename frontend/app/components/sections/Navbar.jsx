@@ -1,6 +1,6 @@
 import Image from "next/image";
 import tu from "@/app/components/assets/tu.png";
-import data from "../data/info.json";
+import data from "../../data/en.json";
 import Link from "next/link";
 
 export default function Navbar() {
