@@ -12,8 +12,8 @@ services:
       - 3000:3000
 
   backend:
-    container_name: quiz-converter-api
-    image: quiz-converter-api
+    container_name: quiz-converter-backend
+    image: quiz-converter-backend
     build:
       context: ./backend
       dockerfile: Dockerfile
