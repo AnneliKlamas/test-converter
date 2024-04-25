@@ -48,10 +48,9 @@ public class MoodleXmlCreatorService {
         setQuestionName(question, doc, questionElem);
         addQuestionDescription(question, doc, questionElem);
 
-        var correctAnswerCount = (int) question.answerOptions().stream().filter(Answer::isCorrect).count();
-
         for (var answer : question.answerOptions()) {
-            addAnswer(doc, answer, questionElem, correctAnswerCount, question.type());
+            if (question.type().equals(QuestionType.REGULAR_EXPRESSION) && !answer.isCorrect()) continue;
+            addAnswer(doc, answer, questionElem, question);
         }
 
         addQuestionOptions(question, doc, questionElem);
@@ -65,10 +64,17 @@ public class MoodleXmlCreatorService {
     }
 
     private static void addQuestionOptions(Question question, Document doc, Element questionElem) {
-        var shuffleTagElem = doc.createElement("shuffleanswers");
-        var shuffleText = question.shuffle() ? "1" : "0";
-        shuffleTagElem.setTextContent(shuffleText);
-        questionElem.appendChild(shuffleTagElem);
+        if (question.type().equals(QuestionType.REGULAR_EXPRESSION)) {
+            var showAlternateElem = doc.createElement("studentshowalternate");
+            showAlternateElem.setTextContent("0");
+            questionElem.appendChild(showAlternateElem);
+        }
+        if (question.type().equals(QuestionType.MULTIPLE_CHOICE) || question.type().equals(QuestionType.SINGLE_CHOICE)) {
+            var shuffleTagElem = doc.createElement("shuffleanswers");
+            var shuffleText = question.shuffle() ? "1" : "0";
+            shuffleTagElem.setTextContent(shuffleText);
+            questionElem.appendChild(shuffleTagElem);
+        }
     }
 
     private static void addQuestionType(Question question, Document doc, Element questionElem) {
@@ -121,10 +127,12 @@ public class MoodleXmlCreatorService {
         };
     }
 
-    private static void addAnswer(Document doc, Answer answer, Element questionElem, int correctAnswerCount, QuestionType questionType) {
+    private static void addAnswer(Document doc, Answer answer, Element questionElem, Question question) {
+        var correctAnswerCount = (int) question.answerOptions().stream().filter(Answer::isCorrect).count();
+
         var answerElem = doc.createElement("answer");
         var fraction = 0.0;
-        if (questionType.equals(QuestionType.MULTIPLE_CHOICE)) {
+        if (question.type().equals(QuestionType.MULTIPLE_CHOICE)) {
             fraction = answer.isCorrect() ? 100.0 / correctAnswerCount : -100.0 / correctAnswerCount;
         } else {
             fraction = answer.isCorrect() ? 100 : 0;
