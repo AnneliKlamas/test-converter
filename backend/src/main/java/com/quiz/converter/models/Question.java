@@ -8,11 +8,12 @@ import java.util.List;
 
 public record Question(
         String name,
-        String feedback,
+        String defaultFeedback,
         QuestionType type,
         QuestionDescription description,
         List<Answer> answerOptions,
         List<QuestionErrorType> errors,
         List<QuestionWarningType> warnings,
-        boolean shuffle) {
+        boolean shuffle,
+        boolean partialCredit) {
 }

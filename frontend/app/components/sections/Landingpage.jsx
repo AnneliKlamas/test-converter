@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Button from "@/app/components/utils/Button";
 import FileUpload from "@/app/components/utils/FileUpload";
 import InfoModal from "@/app/components/modal/InfoModal";
 import Button from "@/app/components/utils/Button";
@@ -81,15 +82,14 @@ export default function Landingpage() {
           {data.landing.download}
         </div>
         <div className="flex sm:flex-row flex-col sm:gap-32">
-          <Button onClick={() => handleSubmit("moodleXML")} variant="secondary">
-            {data.landing.moodle}
-          </Button>
           <Button
-            onClick={() => handleSubmit("courseraDocx")}
-            variant="secondary"
-          >
-            {data.landing.Coursera}
-          </Button>
+            name={data.landing.moodle}
+            handleSubmit={() => handleSubmit("moodle")}
+          />
+          <Button
+            name={data.landing.Coursera}
+            handleSubmit={() => handleSubmit("coursera")}
+          />
         </div>
       </div>
       <InfoModal show={showModal} onClose={closeModal} details={details} />
