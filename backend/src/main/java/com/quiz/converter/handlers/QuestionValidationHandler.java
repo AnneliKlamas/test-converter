@@ -36,7 +36,7 @@ public class QuestionValidationHandler {
                     state.getErrors().add(QuestionErrorType.INVALID_REGEX);
                 }
             }
-            state.getWarnings().add(QuestionWarningType.MOODLE_REGEX_RESTRICTION);
+            state.getWarnings().add(QuestionWarningType.REGEX_RESTRICTION);
         }
         else if (correctAnswerCount == 0) {
             state.getErrors().add(QuestionErrorType.NO_CORRECT_ANSWER_FOUND);

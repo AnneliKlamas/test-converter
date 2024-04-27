@@ -3,5 +3,5 @@ package com.quiz.converter.models.enums;
 public enum QuestionWarningType {
     CHECK_QUESTION_NAME,
     UNKNOWN_PARAGRAPH_TYPE,
-    MOODLE_REGEX_RESTRICTION
+    REGEX_RESTRICTION
 }
