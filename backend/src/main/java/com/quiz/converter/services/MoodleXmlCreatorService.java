@@ -49,7 +49,6 @@ public class MoodleXmlCreatorService {
         addQuestionDescription(question, doc, questionElem);
 
         for (var answer : question.answerOptions()) {
-            if (question.type().equals(QuestionType.REGULAR_EXPRESSION) && !answer.isCorrect()) continue;
             addAnswer(doc, answer, questionElem, question);
         }
 
