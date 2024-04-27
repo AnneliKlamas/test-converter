@@ -4,5 +4,7 @@ public enum QuestionType {
     SINGLE_CHOICE,
     MULTIPLE_CHOICE,
     TEXT_MATCH,
+    REGULAR_EXPRESSION,
     UNKNOWN
 }
+

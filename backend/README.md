@@ -41,6 +41,5 @@ Answer option need to start with letter or number followed by colon ':' or closi
 Correct answer should be marked with '*'. Example: "*A) answer option text". Also multiple symbols will work: "   ** * 1:
 answer option text".
 
-Text match/short answer questions are not case-sensitive. Moodle doesn't support incorrect answers and their feedback,
-so incorrect answers will be skipped.
+Text match/short answer questions are not case-sensitive. 
 

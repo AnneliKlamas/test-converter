@@ -60,6 +60,8 @@ public class QuestionHandler {
             state.setType(QuestionType.MULTIPLE_CHOICE);
         } else if (lowerCaseText.matches(".*(text)\s*(match).*") || lowerCaseText.matches(".*(short)\s*(answer).*")) {
             state.setType(QuestionType.TEXT_MATCH);
+        } else if (lowerCaseText.matches(".*(regular)\s*(expression).*")) {
+            state.setType(QuestionType.REGULAR_EXPRESSION);
         } else {
             state.setType(QuestionType.UNKNOWN);
         }
