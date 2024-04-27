@@ -6,7 +6,7 @@ import InfoModal from "@/app/components/modal/InfoModal";
 import Button from "@/app/components/utils/Button";
 import { sendFileToBackend } from "../utils/SendFileToBackend";
 import { toast } from "react-toastify";
-import data from "../data/info.json";
+import data from "../../data/en.json";
 
 export default function Landingpage() {
   const [file, setFiles] = useState(null);
