@@ -14,8 +14,7 @@ public class FeedbackHandler {
 
     public void add(String text, ParagraphType paragraphType) {
         switch (paragraphType) {
-            case DEFAULT_FEEDBACK ->
-                    state.setDefaultFeedback(text.toLowerCase().replace("default feedback:", "").strip());
+            case DEFAULT_FEEDBACK -> state.setDefaultFeedback(text.replaceAll("^\s*([dD][eE][fF][aA][uU][lL][tT])\s*([fF][eE][eE][dD][bB][aA][cC][kK])\s*(:)", "").strip());
             case FEEDBACK -> {
                 var feedbackText = text.toLowerCase().replace("feedback", "").strip().replace(":", "").strip();
                 state.getAnswerOptions().get(state.getAnswerOptions().size() - 1).setFeedback(Optional.of(feedbackText));

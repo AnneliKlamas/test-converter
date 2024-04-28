@@ -22,6 +22,7 @@ public class QuestionState {
     private List<QuestionErrorType> errors = new ArrayList<>();
     private List<QuestionWarningType> warnings = new ArrayList<>();
     private boolean shuffle = false;
+    private boolean partialCredit = true;
 
     public void cleanState() {
         name = "";
@@ -33,9 +34,10 @@ public class QuestionState {
         errors = new ArrayList<>();
         warnings = new ArrayList<>();
         shuffle = false;
+        partialCredit = true;
     }
 
     public Question createQuestion() {
-        return new Question(name, defaultFeedback, type, description, answerOptions, errors, warnings, shuffle);
+        return new Question(name, defaultFeedback, type, description, answerOptions, errors, warnings, shuffle, partialCredit);
     }
 }

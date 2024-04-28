@@ -35,6 +35,11 @@ public class QuestionHandler {
         } else if (lowerCaseText.matches(".*(shuffle).*")) {
             state.setShuffle(true);
         }
+        if (lowerCaseText.matches(".*(no)\s*(partial)\s*(credit).*")) {
+            state.setPartialCredit(false);
+        } else if (lowerCaseText.matches(".*(partial)\s*(credit).*")) {
+            state.setPartialCredit(true);
+        }
     }
 
     private void addQuestionName(String text) {
@@ -53,6 +58,10 @@ public class QuestionHandler {
             state.setType(QuestionType.SINGLE_CHOICE);
         } else if (lowerCaseText.matches(".*(multiple)\s*(choice).*") || lowerCaseText.contains("checkbox")) {
             state.setType(QuestionType.MULTIPLE_CHOICE);
+        } else if (lowerCaseText.matches(".*(text)\s*(match).*") || lowerCaseText.matches(".*(short)\s*(answer).*")) {
+            state.setType(QuestionType.TEXT_MATCH);
+        } else if (lowerCaseText.matches(".*(regular)\s*(expression).*")) {
+            state.setType(QuestionType.REGULAR_EXPRESSION);
         } else {
             state.setType(QuestionType.UNKNOWN);
         }

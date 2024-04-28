@@ -108,7 +108,7 @@ public class FileUploadService {
 
     private Answer createAnswerFromString(String text, List<Picture> paragraphPictures) {
         var isCorrectAnswer = text.strip().matches("(\\s*\\*+\s*).*");
-        var answerText = text.strip().replaceAll("(\\s*\\**\\s*)*[a-zA-Z\\d]\\s*[:)]", "");
+        var answerText = text.strip().replaceAll("^(\\s*\\**\\s*)*[a-zA-Z\\d]\\s*[:)]", "");
         return new Answer(answerText, null, isCorrectAnswer, paragraphPictures);
     }
 }

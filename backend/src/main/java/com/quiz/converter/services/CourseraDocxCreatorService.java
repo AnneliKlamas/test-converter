@@ -26,6 +26,8 @@ public class CourseraDocxCreatorService {
             for (int i = 0; i < question.answerOptions().size(); i++) {
                 addAnswerOptions(question, i, doc);
             }
+
+            addDefaultFeedback(question, doc);
         }
 
         var bos = new ByteArrayOutputStream();
@@ -33,6 +35,14 @@ public class CourseraDocxCreatorService {
         doc.close();
 
         return bos.toByteArray();
+    }
+
+    private void addDefaultFeedback(Question question, XWPFDocument doc) {
+        if (!question.defaultFeedback().isEmpty()) {
+            var defaultFeedback = doc.createParagraph();
+            var defaultFeedbackRun = defaultFeedback.createRun();
+            defaultFeedbackRun.setText("Default Feedback: " + question.defaultFeedback());
+        }
     }
 
     private static void addQuestionDescription(Question question, XWPFDocument doc) {
@@ -48,12 +58,7 @@ public class CourseraDocxCreatorService {
     private static void addQuestionDetails(List<Question> questions, Question question, XWPFDocument doc) {
         var questionDetails = doc.createParagraph();
         var questionDetailsRun = questionDetails.createRun();
-        var questionTypeText = "";
-        if (question.type().equals(QuestionType.SINGLE_CHOICE)) {
-            questionTypeText = "single correct answer";
-        } else if (question.type().equals(QuestionType.MULTIPLE_CHOICE)) {
-            questionTypeText = "checkbox";
-        }
+        var questionTypeText = getQuestionTypeText(question.type());
         int questionName;
         try {
             questionName = Integer.parseInt(question.name());
@@ -61,8 +66,20 @@ public class CourseraDocxCreatorService {
             questionName = questions.indexOf(question) + 1;
         }
         var shuffle = question.shuffle() ? "shuffle" : "no shuffle";
-        questionDetailsRun.setText("Question " + questionName + " - " + questionTypeText + "," + shuffle);
+        var partialCredit = question.partialCredit() ? "partial credit" : "no partial credit";
+        questionDetailsRun.setText("Question " + questionName + " - " + questionTypeText + ", " + shuffle + ", " + partialCredit);
     }
+
+    private static String getQuestionTypeText(QuestionType type) {
+        return switch (type) {
+            case SINGLE_CHOICE -> "single correct answer";
+            case MULTIPLE_CHOICE -> "checkbox";
+            case TEXT_MATCH -> "text match";
+            case REGULAR_EXPRESSION -> "regular expression";
+            default -> "";
+        };
+    }
+
 
     private static void addAnswerOptions(Question question, int i, XWPFDocument doc) {
         var answer = question.answerOptions().get(i);
