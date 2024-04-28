@@ -52,8 +52,7 @@ export default function Landingpage() {
           },
         },
       );
-      setShowDetailsButtons(true),
-      setDetails(details);
+      setShowDetailsButtons(true), setDetails(details);
       setShowModal(true);
     } catch (error) {
       throw error;
