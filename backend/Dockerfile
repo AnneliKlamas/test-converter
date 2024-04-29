@@ -8,7 +8,5 @@ RUN mvn dependency:go-offline -B
 COPY . .
 RUN mvn package
 
-RUN mkdir -p /app
-
 EXPOSE 8000
 CMD ["java", "-jar", "target/converter-0.0.1-SNAPSHOT.jar"]
