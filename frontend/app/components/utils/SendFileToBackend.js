@@ -4,42 +4,39 @@ export const sendFileToBackend = async (file, outputFormat) => {
 
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/file/convert`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/file/convert/${outputFormat}`,
       {
         method: "POST",
         body: formData,
+        headers: {
+          Accept: "application/json",
+        },
       },
     );
 
     if (!response.ok) {
-      throw new Error(`HTTP error ${response.status}`);
+      throw new Error(`Server responded with a status of ${response.status}`);
     }
 
-    const fileName = file[0].name.split(".")[0];
-    const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
+    const data = await response.json();
 
-    const fileExtension =
-      outputFormat === "moodle"
-        ? "xml"
-        : outputFormat === "coursera"
-        ? "docx"
-        : "";
+    const mimeType =
+      outputFormat === "moodleXML"
+        ? "application/xml"
+        : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
-    if (fileExtension) {
-      link.download = `${fileName}.${fileExtension}`;
-    } else {
-      throw new Error("Invalid output format");
+    const fileData = data.file;
+    const fileName = data.fileName;
+    if (data.details.questionCount > 0) {
+      const link = document.createElement("a");
+      link.href = `data:${mimeType};base64,${fileData}`;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-
-    return { success: true };
+    return { details: data.details };
   } catch (error) {
     throw error;
   }

@@ -11,10 +11,25 @@
     "uploadError": "There was an error uploading your file. Please try again.",
     "download": "Download as",
     "moodle": "Moodle XML",
-    "Coursera": "Coursera .docx"
+    "Coursera": "Coursera .docx",
+    "details": "Open details"
   },
   "navbar": {
     "documentation": "Documentation"
+  },
+  "modal": {
+    "title": "Document Details",
+    "documentation": "Read more about documentation:",
+    "none": "None",
+    "click": "Click here!",
+    "questionCount": "Question Count:",
+    "answerPicCount": "Answer Picture Count:",
+    "answersCount": "Answers Count:",
+    "questionPicCount": "Question Picture Count:",
+    "questionTypes": "Question Types:",
+    "skippedQuestions": "Skipped Questions:",
+    "questionErrors": "Question Errors:",
+    "questionWarnings": "Question Warnings:"
   },
   "documentation": {
     "title": "Welcome to Documentation Page",
@@ -24,5 +39,5 @@
     "templateName": "UniTartuCS Template",
     "templateLink": "https://docs.google.com/document/d/106xTDS6IG7fofL6Ju4JnqntjxLeBfBM_LIyjKtskFb8/edit",
     "docLink": "https://docs.google.com/document/d/1IZWmkxqYYqBAYqW8uumiZ1k94muKS4IjpYQuOQ8-9WU/edit "
-    }
+  }
 }
