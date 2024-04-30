@@ -52,7 +52,8 @@ export default function Landingpage() {
           },
         },
       );
-      setShowDetailsButtons(true), setDetails(details);
+      setShowDetailsButtons(true);
+      setDetails(details);
       setShowModal(true);
     } catch (error) {
       throw error;
@@ -72,9 +73,10 @@ export default function Landingpage() {
       <div className="flex flex-col gap-3 justify-center items-center pt-10">
         <FileUpload onFileUpload={handleFileUpload} />
         {showDetailsButtons && (
-          <Button onClick={openModal} variant="primary">
-            {data.landing.details}
-          </Button>
+          <Button
+              onClick={openModal}
+              variant="primary"
+              name={data.landing.details}/>
         )}
         <div className="text-3xl text-center font-bold text-blue pt-5">
           {data.landing.download}
@@ -82,11 +84,11 @@ export default function Landingpage() {
         <div className="flex sm:flex-row flex-col sm:gap-32">
           <Button
             name={data.landing.moodle}
-            handleSubmit={() => handleSubmit("moodle")}
+            onClick={() => handleSubmit("moodleXML")}
           />
           <Button
             name={data.landing.Coursera}
-            handleSubmit={() => handleSubmit("coursera")}
+            onClick={() => handleSubmit("courseraDocx")}
           />
         </div>
       </div>
