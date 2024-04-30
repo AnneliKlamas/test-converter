@@ -6,7 +6,7 @@ import Section from "./Section";
 import Modal from "./Modal";
 
 import CloseIcon from "@/app/components/assets/CloseIcon";
-import data from "../data/info.json";
+import data from "../../data/en.json";
 
 const InfoModal = ({ show, onClose, details }) => {
   const questionTypes = useMemo(() => {
